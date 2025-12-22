@@ -10,6 +10,7 @@
  */
 
 namespace Symfony\Component\HttpKernel;
+'check.login' => \App\Http\Middleware\CheckLogin::class,
 
 use Symfony\Component\Config\Builder\ConfigBuilderGenerator;
 use Symfony\Component\Config\ConfigCache;

@@ -86,17 +86,42 @@
             </button>
           </a>
         </nav>
+   <!-- Top Bar -->
+
+    <!-- Left (Title or Logo) -->
+   
+
+    <!-- Right (Profile + Logout) -->
+    <div class="flex items-center gap-6">
 
         <!-- Profile -->
-        <a href="{{route('login')}}">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full overflow-hidden cursor-pointer border-2 border-white/10">
-              <img class="w-full h-full object-cover"
-                src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200" alt="Profile" />
+        <div class="flex items-center gap-3 cursor-pointer">
+            <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white/10">
+                <img
+                    class="w-full h-full object-cover"
+                    src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200"
+                    alt="Profile"
+                />
             </div>
-            <p class="hidden sm:block text-base font-semibold text-white">Abhishek Kumar</p>
-          </div>
-        </a>
+
+            <p class="hidden sm:block text-base font-semibold text-white">
+                {{ session('user_name') }}
+            </p>
+        </div>
+
+        <!-- Logout -->
+        <form method="POST" action="{{ route('logout') }}"
+              onsubmit="return confirmLogout();">
+            @csrf
+            <button type="submit"
+                class="px-4 py-2 rounded-lg text-red-400 hover:bg-red-500/10 hover:text-red-300 transition font-semibold">
+                Logout
+            </button>
+        </form>
+
+    </div>
+
+
       </div>
     </div>
   </header>
@@ -259,7 +284,7 @@
               <div class="min-w-0">
                 <div class="flex flex-wrap items-center gap-2">
                   <p class="text-sm sm:text-base font-semibold truncate cursor-pointer hover:underline text-white/90">
-                    Dr. Priya Sharma</p>
+                      {{ session('user_name') }}</p>
                   <svg class="w-4 h-4 text-amber-300" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 2l2.2 3.7 4.2 1-2.8 3.2.4 4.3L12 12.9 8 14.2l.4-4.3L5.6 6.7l4.2-1L12 2Z" />
                   </svg>
@@ -359,7 +384,7 @@
         <span class="text-xs font-medium">Feed</span>
       </a>
 
-      <a href="./pages/create-post.html"
+      <a href="{{ route('posts.create') }}"
         class="flex flex-col items-center gap-1 px-3 py-2 text-white/60 bg-transparent border-none cursor-pointer transition-colors">
         <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />

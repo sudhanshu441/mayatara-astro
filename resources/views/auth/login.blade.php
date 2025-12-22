@@ -47,19 +47,28 @@
     <!-- Login Card -->
     <div class="glass rounded-2xl p-8 shadow-2xl">
 
-        {{-- ERROR MESSAGE --}}
-        @if(session('error'))
-            <div class="mb-4 bg-red-500/20 text-red-400 px-4 py-2 rounded-lg text-sm">
-                {{ session('error') }}
-            </div>
-        @endif
 
-        {{-- VALIDATION ERRORS --}}
-        @if ($errors->any())
-            <div class="mb-4 bg-red-500/20 text-red-400 px-4 py-2 rounded-lg text-sm">
-                {{ $errors->first() }}
-            </div>
-        @endif
+    {{-- SUCCESS MESSAGE --}}
+    @if(session('success'))
+        <div class="mb-4 bg-green-500/20 text-green-400 px-4 py-2 rounded-lg text-sm">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    {{-- ERROR MESSAGE --}}
+    @if(session('error'))
+        <div class="mb-4 bg-red-500/20 text-red-400 px-4 py-2 rounded-lg text-sm">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    {{-- VALIDATION ERRORS --}}
+    @if ($errors->any())
+        <div class="mb-4 bg-red-500/20 text-red-400 px-4 py-2 rounded-lg text-sm">
+            {{ $errors->first() }}
+        </div>
+    @endif
+
 
         <form method="POST" action="{{ route('login.submit') }}" class="space-y-5">
             @csrf
@@ -105,7 +114,7 @@
 
             <p class="text-center text-gray-400 text-sm">
                 Don’t have an account?
-                <a href="#" class="text-purple-400 font-semibold hover:text-purple-300">Sign up</a>
+                <a href="{{route('register')}}" class="text-purple-400 font-semibold hover:text-purple-300">Sign up</a>
             </p>
         </form>
     </div>

@@ -46,7 +46,7 @@ if ($request->hasFile('media')) {
     $tags = $request->tags ? array_map('trim', explode(',', $request->tags)) : [];
 
     Post::create([
-        'user_id' => auth()->id(),
+  'user_id' => session('user_id'),
         'title' => $request->title,
         'slug' => $slug,
         'category' => $request->category,
