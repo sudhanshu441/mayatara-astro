@@ -152,149 +152,105 @@
     </div>
 
     <div class="flex gap-6 lg:gap-8 items-start relative">
-      <!-- SIDEBAR (Desktop) -->
-      <aside id="sidebarContainer" class="hidden lg:block w-[280px] shrink-0">
-        <div id="filtersSpacer"></div>
-        <div id="filtersCard"
-          class="filters-card-wrapper rounded-2xl border border-white/10 bg-gradient-to-b from-[#15183A] to-[#0B0E22] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.55)]">
-          <h2 class="text-lg font-semibold mb-4 text-white/90">Filters</h2>
+    <!-- SIDEBAR (Desktop) -->
+<aside id="sidebarContainer" class="hidden lg:block w-[280px] shrink-0">
+    <div id="filtersSpacer"></div>
+    <div id="filtersCard"
+         class="filters-card-wrapper rounded-2xl border border-white/10 bg-gradient-to-b from-[#15183A] to-[#0B0E22] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.55)]">
+        <h2 class="text-lg font-semibold mb-4 text-white/90">Filters</h2>
 
-          <div class="space-y-5">
+        <div class="space-y-5">
             <!-- Sort By -->
             <div>
-              <p class="text-xs font-semibold mb-2 text-white/80">Sort By</p>
-              <div class="space-y-2">
-                <button aria-label="Newest First" type="button"
-                  class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border border-purple-500/30 bg-[linear-gradient(to_right,_rgba(58,29,255,0.55),_rgba(35,22,74,0.55))] text-white text-sm font-semibold text-left cursor-pointer shadow-[0_10px_30px_rgba(58,29,255,0.25)] hover:shadow-[0_12px_35px_rgba(58,29,255,0.35)] transition-all duration-200">
-                  <svg class="w-4 h-4 text-white/90" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="9"></circle>
-                    <path d="M12 7v6l4 2"></path>
-                  </svg>
-                  <span>Newest First</span>
-                </button>
+                <p class="text-xs font-semibold mb-2 text-white/80">Sort By</p>
+                <div class="space-y-2">
+                    @php $currentSort = request('sort') @endphp
 
-                <button aria-label="Most Popular" type="button"
-                  class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-white/85 text-sm font-semibold text-left cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all duration-200">
-                  <svg class="w-4 h-4 text-white/75" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 17l6-6 4 4 7-7"></path>
-                    <path d="M14 8h6v6"></path>
-                  </svg>
-                  <span>Most Popular</span>
-                </button>
+                    <a href="{{ route('dashboard', ['sort' => 'newest', 'topic' => request('topic')]) }}"
+                       class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border 
+                              {{ $currentSort == 'newest' ? 'border-purple-500/50 bg-purple-600/20 text-white' : 'border-white/10 bg-white/5 text-white/85 hover:bg-white/10 hover:border-white/20' }}
+                              text-sm font-semibold text-left cursor-pointer transition-all duration-200">
+                        <svg class="w-4 h-4 text-white/90" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M12 7v6l4 2"></path>
+                        </svg>
+                        <span>Newest First</span>
+                    </a>
 
-                <button aria-label="Trending" type="button"
-                  class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-white/85 text-sm font-semibold text-left cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all duration-200">
-                  <svg class="w-4 h-4 text-white/75" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 22c4 0 7-3 7-7 0-3-2-5-3-7-1 2-2 3-4 4 0-3-2-5-4-7 0 3-3 5-3 10 0 4 3 7 7 7Z"></path>
-                  </svg>
-                  <span>Trending</span>
-                </button>
-              </div>
+                    <a href="{{ route('dashboard', ['sort' => 'popular', 'topic' => request('topic')]) }}"
+                       class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border 
+                              {{ $currentSort == 'popular' ? 'border-purple-500/50 bg-purple-600/20 text-white' : 'border-white/10 bg-white/5 text-white/85 hover:bg-white/10 hover:border-white/20' }}
+                              text-sm font-semibold text-left cursor-pointer transition-all duration-200">
+                        <svg class="w-4 h-4 text-white/75" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 17l6-6 4 4 7-7"></path>
+                            <path d="M14 8h6v6"></path>
+                        </svg>
+                        <span>Most Popular</span>
+                    </a>
+
+                    <a href="{{ route('dashboard', ['sort' => 'trending', 'topic' => request('topic')]) }}"
+                       class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border 
+                              {{ $currentSort == 'trending' ? 'border-purple-500/50 bg-purple-600/20 text-white' : 'border-white/10 bg-white/5 text-white/85 hover:bg-white/10 hover:border-white/20' }}
+                              text-sm font-semibold text-left cursor-pointer transition-all duration-200">
+                        <svg class="w-4 h-4 text-white/75" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22c4 0 7-3 7-7 0-3-2-5-3-7-1 2-2 3-4 4 0-3-2-5-4-7 0 3-3 5-3 10 0 4 3 7 7 7Z"></path>
+                        </svg>
+                        <span>Trending</span>
+                    </a>
+                </div>
             </div>
 
             <!-- Topics -->
             <div>
-              <p class="text-xs font-semibold mb-2 text-white/80">Topics</p>
-              <div class="space-y-2">
-                <button aria-label="Vedic Astrology" type="button"
-                  class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-white/85 text-sm font-semibold text-left cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all duration-200">
-                  <svg class="w-4 h-4 text-white/75" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 19a2 2 0 0 0 2 2h14"></path>
-                    <path d="M6 2h14v20H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z"></path>
-                  </svg>
-                  <span>Vedic Astrology</span>
-                </button>
+                <p class="text-xs font-semibold mb-2 text-white/80">Topics</p>
+                <div class="space-y-2">
+                    @php $currentTopic = request('topic') @endphp
 
-                <button aria-label="Horoscopes" type="button"
-                  class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-white/85 text-sm font-semibold text-left cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all duration-200">
-                  <svg class="w-4 h-4 text-white/75" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2l3.1 6.3 7 1-5 4.9 1.2 7-6.3-3.3-6.3 3.3 1.2-7-5-4.9 7-1L12 2Z"></path>
-                  </svg>
-                  <span>Horoscopes</span>
-                </button>
-
-                <button aria-label="Zodiac Signs" type="button"
-                  class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-white/85 text-sm font-semibold text-left cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all duration-200">
-                  <svg class="w-4 h-4 text-white/75" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2l1.4 4.3L18 8l-4.6 1.7L12 14l-1.4-4.3L6 8l4.6-1.7L12 2Z"></path>
-                    <path d="M19 13l.9 2.7L23 17l-3.1 1.3L19 21l-.9-2.7L15 17l3.1-1.3L19 13Z"></path>
-                  </svg>
-                  <span>Zodiac Signs</span>
-                </button>
-
-                <button aria-label="Planetary Transit" type="button"
-                  class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-white/85 text-sm font-semibold text-left cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all duration-200">
-                  <svg class="w-4 h-4 text-white/75" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="9"></circle>
-                    <path d="M3 12h18"></path>
-                    <path d="M12 3a14 14 0 0 1 0 18"></path>
-                    <path d="M12 3a14 14 0 0 0 0 18"></path>
-                  </svg>
-                  <span>Planetary Transit</span>
-                </button>
-
-                <button aria-label="Numerology" type="button"
-                  class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-white/85 text-sm font-semibold text-left cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all duration-200">
-                  <svg class="w-4 h-4 text-white/75" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 9h16"></path>
-                    <path d="M4 15h16"></path>
-                    <path d="M10 3L8 21"></path>
-                    <path d="M16 3l-2 18"></path>
-                  </svg>
-                  <span>Numerology</span>
-                </button>
-
-                <button aria-label="Tarot" type="button"
-                  class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-white/85 text-sm font-semibold text-left cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all duration-200">
-                  <svg class="w-4 h-4 text-white/75" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 10L12 5 2 10l10 5 10-5Z"></path>
-                    <path d="M6 12v6c4 2 8 2 12 0v-6"></path>
-                  </svg>
-                  <span>Tarot</span>
-                </button>
-              </div>
+                    @foreach(['Vedic Astrology','Horoscopes','Zodiac Signs','Planetary Transit','Numerology','Tarot'] as $topic)
+                        <a href="{{ route('dashboard', ['topic' => $topic, 'sort' => request('sort')]) }}"
+                           class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border 
+                                  {{ $currentTopic == $topic ? 'border-purple-500/50 bg-purple-600/20 text-white' : 'border-white/10 bg-white/5 text-white/85 hover:bg-white/10 hover:border-white/20' }}
+                                  text-sm font-semibold text-left cursor-pointer transition-all duration-200">
+                            <svg class="w-4 h-4 text-white/75" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 19a2 2 0 0 0 2 2h14"></path>
+                                <path d="M6 2h14v20H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z"></path>
+                            </svg>
+                            <span>{{ $topic }}</span>
+                        </a>
+                    @endforeach
+                </div>
             </div>
-          </div>
         </div>
-      </aside>
+    </div>
+</aside>
 
       <!-- POSTS FEED -->
       <div class="flex-1 space-y-6">
         <!-- Post Card 1 -->
-       @foreach ($posts as $post)
-<article
-    class="rounded-3xl border border-white/10 bg-gradient-to-b cursor-pointer from-[#1B1E47] to-[#121538] p-6 md:p-8 shadow-[0_30px_80px_rgba(0,0,0,0.55)]">
+     @foreach ($posts as $post)
+<article class="rounded-3xl border border-white/10 bg-gradient-to-b cursor-pointer from-[#1B1E47] to-[#121538] p-6 md:p-8 shadow-[0_30px_80px_rgba(0,0,0,0.55)]">
 
     {{-- Header --}}
     <div class="flex items-center gap-3 min-w-0">
-              <div
-                class="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden shrink-0 cursor-pointer border-2 border-white/10">
-                <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200" alt="Author"
-                  class="w-full h-full object-cover" />
-              </div>
-              <div class="min-w-0">
-                <div class="flex flex-wrap items-center gap-2">
-                  <p class="text-sm sm:text-base font-semibold truncate cursor-pointer hover:underline text-white/90">
-                      {{ session('user_name') }}</p>
-                  <svg class="w-4 h-4 text-amber-300" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2l2.2 3.7 4.2 1-2.8 3.2.4 4.3L12 12.9 8 14.2l.4-4.3L5.6 6.7l4.2-1L12 2Z" />
-                  </svg>
-                  <span
-                    class="px-2.5 py-0.5 rounded-full text-xs font-medium cursor-pointer bg-white/5 text-white/70 border border-white/10">Vedic
-                    Astrologer</span>
-                </div>
-                <p class="text-xs sm:text-sm mt-1 text-white/55">2h ago</p>
-              </div>
+        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden shrink-0 cursor-pointer border-2 border-white/10">
+            <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200" alt="Author" class="w-full h-full object-cover" />
+        </div>
+        <div class="min-w-0">
+            <div class="flex flex-wrap items-center gap-2">
+                <p class="text-sm sm:text-base font-semibold truncate cursor-pointer hover:underline text-white/90">
+                    {{ $post->user->name ?? session('user_name') }}
+                </p>
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-medium cursor-pointer bg-white/5 text-white/70 border border-white/10">
+                    Vedic Astrologer
+                </span>
             </div>
+            <p class="text-xs sm:text-sm mt-1 text-white/55">{{ $post->created_at->diffForHumans() }}</p>
+        </div>
+    </div>
 
     {{-- Tags --}}
     <div class="flex flex-wrap gap-3 text-xs mb-4 text-amber-300">
@@ -302,60 +258,101 @@
             <span>#{{ $tag }}</span>
         @endforeach
     </div>
-
+<a href="{{ route('posts.show', $post->id) }}">
     {{-- Title --}}
-    <a >
-        <h3 class="text-xl font-semibold mb-3 text-white/90 hover:underline">
-            {{ $post->title }}
-        </h3>
-    </a>
+    <h3 class="text-xl font-semibold mb-3 text-white/90 hover:underline">
+        {{ $post->title }}
+    </h3>
+</a>
 
     {{-- Content --}}
-    <p class="text-sm text-white/70 mb-4">
-        {{ Str::limit(strip_tags($post->content), 160) }}
-    </p>
+    <p class="text-sm text-white/70 mb-4">{{ Str::limit(strip_tags($post->content), 160) }}</p>
 
     {{-- Media --}}
-    @if (!empty($post->media))
+    @if(!empty($post->media))
         <div class="rounded-2xl overflow-hidden mb-5 border border-white/10">
-            <img src="{{ url('public/' . $post->media[0]) }}"
-                 alt="{{ $post->media_alt }}"
-                 class="w-full h-[300px] object-cover">
+            <img src="{{ url('public/' . $post->media[0]) }}" alt="{{ $post->media_alt }}" class="w-full h-[300px] object-cover">
         </div>
     @endif
 
     {{-- Footer --}}
     <div class="flex flex-wrap items-center justify-between gap-4">
-            <div class="flex items-center gap-6 text-white/65">
-              <button aria-label="Like Post"
-                class="flex items-center gap-2 cursor-pointer hover:text-white transition-colors">
+        <div class="flex items-center gap-6 text-white/65">
+
+            {{-- Like Button --}}
+           <form action="{{ route('posts.like', $post->id) }}" method="POST">
+    @csrf
+    @php
+        $userLiked = $post->likes->contains('user_id', session('user_id'));
+    @endphp
+    <button type="submit" aria-label="Like Post" class="flex items-center gap-2 cursor-pointer hover:text-white transition-colors">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" 
+             fill="{{ $userLiked ? 'red' : 'none' }}" 
+             stroke="{{ $userLiked ? 'red' : 'currentColor' }}" stroke-width="2">
+            <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
+        </svg>
+        <span class="text-sm font-medium">{{ $post->likes->count() }}</span>
+    </button>
+</form>
+
+            {{-- Comment Count --}}
+            <div class="flex items-center gap-2">
                 <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path
-                    d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
+                    <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
                 </svg>
-                <span class="text-sm font-medium">234</span>
-              </button>
-              <button aria-label="Comment"
-                class="flex items-center gap-2 cursor-pointer hover:text-white transition-colors">
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
-                </svg>
-                <span class="text-sm font-medium">45</span>
-              </button>
-              <button aria-label="read"
-                class="flex items-center gap-2 cursor-pointer hover:text-white transition-colors">
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="18" cy="5" r="2" />
-                  <circle cx="6" cy="12" r="2" />
-                  <circle cx="18" cy="19" r="2" />
-                  <path d="M8 12l8-7M8 12l8 7" />
-                </svg>
-              </button>
+                <span class="text-sm font-medium">{{ $post->comments->count() }}</span>
             </div>
-            <p class="text-xs sm:text-sm text-white/55">5 min read</p>
-          </div>
+
+        </div>
+        <p class="text-xs sm:text-sm text-white/55">5 min read</p>
+    </div>
+
+    {{-- Comment Form --}}
+    <!-- <form action="{{ route('comments.store', $post->id) }}" method="POST" class="mt-3 flex gap-2">
+        @csrf
+        <input type="text" name="comment" placeholder="Add a comment..." class="flex-1 p-2 rounded-lg text-sm text-white/90 bg-white/5 border border-white/10" required>
+        <button type="submit" class="px-4 py-2 bg-amber-400 rounded-lg text-black font-semibold text-sm">Post</button>
+    </form> -->
+
+    {{-- Display Comments --}}
+   <!-- {{-- Display Comments --}}
+@foreach($post->comments as $comment)
+    <div class="flex gap-3 mb-2">
+        <div class="w-8 h-8 rounded-full overflow-hidden border border-white/10">
+            <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=50" alt="User" class="w-full h-full object-cover">
+        </div>
+        <div class="bg-white/5 p-2 rounded-xl flex-1">
+            <p class="text-white/90 text-sm font-medium">{{ $comment->user->name ?? 'Anonymous' }}</p>
+            <p class="text-white/70 text-sm">{{ $comment->comment }}</p>
+            <span class="text-xs text-white/50">{{ $comment->created_at->diffForHumans() }}</span>
+
+            {{-- Reply Form (only for post owner) --}}
+            @if(session('user_id')== $post->user_id)
+                <form action="{{ route('comments.store', $post->id) }}" method="POST" class="mt-2 flex gap-2 ml-6">
+                    @csrf
+                    <input type="hidden" name="parent_id" value="{{ $comment->id }}">
+                    <input type="text" name="comment" placeholder="Reply to this comment..." class="flex-1 p-2 rounded-lg text-sm text-white/90 bg-white/5 border border-white/10" required>
+                    <button type="submit" class="px-4 py-2 bg-amber-400 rounded-lg text-black font-semibold text-sm">Reply</button>
+                </form>
+            @endif
+
+            {{-- Display Replies --}}
+            @foreach($comment->replies as $reply)
+                <div class="ml-6 mt-2 bg-white/10 p-2 rounded-lg">
+                    <p class="text-white/90 text-sm font-medium">{{ $reply->user->name ?? 'Anonymous' }}</p>
+                    <p class="text-white/70 text-sm">{{ $reply->comment }}</p>
+                    <span class="text-xs text-white/50">{{ $reply->created_at->diffForHumans() }}</span>
+                </div>
+            @endforeach
+
+        </div>
+    </div>
+@endforeach -->
+
+
 </article>
 @endforeach
+
 
       
       </div>

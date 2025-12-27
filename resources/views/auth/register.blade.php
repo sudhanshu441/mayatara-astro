@@ -9,133 +9,167 @@
 
     <style>
         body {
-            background: radial-gradient(circle at top right, #2a1b5d, #0f0a1e 45%);
+            background:
+                radial-gradient(900px at 10% 10%, #4c1d95 0%, transparent 40%),
+                radial-gradient(700px at 90% 20%, #1e3a8a 0%, transparent 45%),
+                #0b0617;
         }
+
         .glass {
-            background: rgba(26, 20, 46, 0.75);
-            backdrop-filter: blur(14px);
+            background: linear-gradient(
+                180deg,
+                rgba(30, 24, 58, 0.85),
+                rgba(18, 14, 34, 0.85)
+            );
+            backdrop-filter: blur(16px);
             border: 1px solid rgba(255,255,255,0.08);
         }
+
         .input {
-            transition: all .25s ease;
+            transition: all .2s ease;
         }
+
         .input:focus {
             transform: translateY(-1px);
-            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.25);
+            box-shadow: 0 8px 22px rgba(139,92,246,.25);
+            border-color: rgba(139,92,246,.6);
         }
     </style>
 </head>
 
-<body class="min-h-screen flex items-center justify-center px-4 sm:px-6 py-6 sm:py-10">
+<body class="min-h-screen flex items-center justify-center px-4 py-6">
 
-<div class="w-full max-w-3xl glass rounded-3xl p-6 sm:p-10 shadow-2xl text-white">
+<div class="w-full max-w-2xl glass rounded-2xl p-6 sm:p-8 text-white">
 
     <!-- Header -->
-    <div class="text-center mb-8 sm:mb-10">
-        <h1 class="text-3xl sm:text-4xl font-extrabold mb-2">Create Account</h1>
-        <p class="text-gray-400 text-sm sm:text-base">Begin your mystical journey with Mayatara ✨</p>
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-extrabold">
+            Join <span class="text-purple-400">Mayatara</span>
+        </h1>
+        <p class="text-gray-400 text-sm mt-1">
+            Begin your mystical journey ✨
+        </p>
     </div>
 
+    <!-- Errors -->
     @if ($errors->any())
-        <div class="mb-6 bg-red-500/20 text-red-400 px-4 py-3 rounded-xl text-sm">
+        <div class="mb-5 bg-red-500/15 text-red-400 px-4 py-2 rounded-lg text-sm">
             {{ $errors->first() }}
         </div>
     @endif
 
-    <form method="POST" action="{{ route('register.submit') }}" class="space-y-8">
+    <form method="POST" action="{{ route('register.submit') }}" class="space-y-7">
         @csrf
 
         <!-- Role -->
-        <div class="max-w-sm mx-auto">
-            <label class="block mb-2 text-sm text-gray-300">Register As</label>
+        <div class="max-w-xs mx-auto">
+            <label class="block mb-1 text-sm text-gray-300">Register As</label>
             <select name="role" id="role"
-                class="input w-full text-base bg-black text-white border border-white/20 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500">
-                <option value="user" class="bg-black text-white">User</option>
-                <option value="astrologer" class="bg-black text-white">Astrologer</option>
+                class="input w-full bg-black/40 text-white border border-white/20 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                <option value="user">User</option>
+                <option value="astrologer">Astrologer</option>
             </select>
         </div>
 
-        <!-- Common Fields -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Basic Info -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <input name="name" placeholder="Full Name"
-                class="input text-base bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none">
+                class="input bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 focus:outline-none">
 
             <input name="phone" maxlength="10" placeholder="Phone Number"
-                class="input text-base bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none">
+                class="input bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 focus:outline-none">
 
             <input name="email" placeholder="Email Address (optional)"
-                class="input text-base bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none md:col-span-2">
+                class="input bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 focus:outline-none md:col-span-2">
+        </div>
+
+        <!-- Category (Astrologer only) -->
+        <div id="category-field" class="hidden">
+            <select name="category"
+                class="input w-full bg-black text-white border border-white/20 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                <option value="" class="bg-black text-white">Select Astrology Category</option>
+                <option class="bg-black text-white">Vedic Astrology</option>
+                <option class="bg-black text-white">Horoscopes</option>
+                <option class="bg-black text-white">Zodiac Signs</option>
+                <option class="bg-black text-white">Planetary Transit</option>
+                <option class="bg-black text-white">Numerology</option>
+                <option class="bg-black text-white">Tarot</option>
+            </select>
         </div>
 
         <!-- Astrologer Fields -->
         <div id="astrologer-fields" class="hidden">
-            <h3 class="text-xl font-semibold mb-4 text-purple-400">Astrologer Details</h3>
+            <div class="rounded-xl border border-purple-500/20 bg-purple-500/5 p-5 space-y-4">
+                <h3 class="text-sm font-semibold text-purple-400">
+                    🔮 Astrologer Profile
+                </h3>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <input name="expertise" placeholder="Expertise (Vedic, Tarot, Numerology)"
-                    class="input text-base bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input name="expertise" placeholder="Expertise"
+                        class="input bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 focus:outline-none">
 
-                <input name="experience_years" type="number" placeholder="Years of Experience"
-                    class="input text-base bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none">
+                    <input name="experience_years" type="number" placeholder="Experience (Years)"
+                        class="input bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 focus:outline-none">
 
-                <textarea name="bio" placeholder="Short Bio"
-                    class="input text-base bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none md:col-span-2"></textarea>
+                    <textarea name="bio" rows="2" placeholder="Short Bio"
+                        class="input bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 focus:outline-none md:col-span-2"></textarea>
+                </div>
             </div>
         </div>
 
-        <!-- Password Fields -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-            <!-- Password -->
+        <!-- Passwords -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div class="relative">
                 <input type="password" id="password" name="password" placeholder="Password"
-                    class="input w-full text-base bg-white/5 border border-white/10 rounded-xl px-4 py-3 pr-12 focus:outline-none">
-                
+                    class="input w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 pr-10 focus:outline-none">
                 <button type="button" onclick="togglePassword('password', this)"
-                    class="absolute right-3 top-1/2 -translate-y-1/2 text-xl px-2 text-gray-400 hover:text-purple-400">
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-purple-400">
                     👁
                 </button>
             </div>
 
-            <!-- Confirm Password -->
             <div class="relative">
-                <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Confirm Password"
-                    class="input w-full text-base bg-white/5 border border-white/10 rounded-xl px-4 py-3 pr-12 focus:outline-none"
-                    oninput="checkPasswordMatch()">
-
+                <input type="password" id="password_confirmation" name="password_confirmation"
+                    placeholder="Confirm Password"
+                    oninput="checkPasswordMatch()"
+                    class="input w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 pr-10 focus:outline-none">
                 <button type="button" onclick="togglePassword('password_confirmation', this)"
-                    class="absolute right-3 top-1/2 -translate-y-1/2 text-xl px-2 text-gray-400 hover:text-purple-400">
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-purple-400">
                     👁
                 </button>
             </div>
-
         </div>
 
-        <!-- Password Match Message -->
-        <p id="password-message" class="mt-2 text-sm hidden"></p>
+        <p id="password-message" class="text-xs hidden"></p>
 
-        <!-- Submit Button -->
+        <!-- Submit -->
         <button
-            class="w-full mt-4 sm:mt-6 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg shadow-xl transition">
-            Create Account
+            class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 py-3 rounded-xl font-semibold shadow-lg transition">
+            Create Account ✨
         </button>
 
-        <p class="text-center text-gray-400 text-sm mt-4">
+        <p class="text-center text-gray-400 text-sm">
             Already have an account?
-            <a href="{{ route('login') }}" class="text-purple-400 font-semibold hover:text-purple-300">Login</a>
+            <a href="{{ route('login') }}" class="text-purple-400 font-semibold hover:text-purple-300">
+                Login
+            </a>
         </p>
-
     </form>
 </div>
 
-<!-- Scripts -->
 <script>
     const role = document.getElementById('role');
     const astroFields = document.getElementById('astrologer-fields');
+    const categoryField = document.getElementById('category-field');
 
-    role.addEventListener('change', () => {
-        astroFields.classList.toggle('hidden', role.value !== 'astrologer');
-    });
+    function toggleAstrologerFields() {
+        const isAstrologer = role.value === 'astrologer';
+        astroFields.classList.toggle('hidden', !isAstrologer);
+        categoryField.classList.toggle('hidden', !isAstrologer);
+    }
+
+    role.addEventListener('change', toggleAstrologerFields);
+    toggleAstrologerFields(); // run on load
 
     function togglePassword(id, btn) {
         const input = document.getElementById(id);
@@ -149,24 +183,17 @@
     }
 
     function checkPasswordMatch() {
-        const password = document.getElementById('password').value;
-        const confirm = document.getElementById('password_confirmation').value;
-        const msg = document.getElementById('password-message');
+        const p = document.getElementById('password').value;
+        const c = document.getElementById('password_confirmation').value;
+        const m = document.getElementById('password-message');
 
-        if (!confirm) {
-            msg.classList.add('hidden');
-            return;
-        }
+        if (!c) return m.classList.add('hidden');
 
-        msg.classList.remove('hidden');
-
-        if (password === confirm) {
-            msg.textContent = "Passwords match ✔";
-            msg.className = "mt-2 text-sm text-green-400";
-        } else {
-            msg.textContent = "Passwords do not match ✖";
-            msg.className = "mt-2 text-sm text-red-400";
-        }
+        m.classList.remove('hidden');
+        m.textContent = p === c ? "Passwords match ✔" : "Passwords do not match ✖";
+        m.className = p === c
+            ? "text-xs text-green-400"
+            : "text-xs text-red-400";
     }
 </script>
 

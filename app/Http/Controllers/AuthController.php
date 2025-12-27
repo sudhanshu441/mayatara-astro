@@ -13,16 +13,44 @@ class AuthController extends Controller
         // Static view for now
         return view('auth.login');
     }
+public function dashboard(Request $request)
+{
+    $query = Post::where('status', 'published')
+                 ->where('visibility', 'public')
+                 ->with('user'); // eager load user for category
 
-  public function dashboard()
-    {
-        $posts = Post::where('status', 'published')
-        ->where('visibility', 'public')
-        ->latest()
-        ->get();
+    // ----- SORTING -----
+    if ($request->has('sort')) {
+        switch ($request->sort) {
+            case 'newest':
+                $query->latest(); // created_at DESC
+                break;
 
-        return view('dashboard', compact('posts'));
+            case 'popular':
+                $query->withCount('likes')->orderBy('likes_count', 'desc');
+                break;
+
+            case 'trending':
+                $query->withCount('comments')->orderBy('comments_count', 'desc');
+                break;
+        }
+    } else {
+        $query->latest();
     }
+
+    // ----- USER CATEGORY FILTER -----
+    if ($request->has('topic') && !empty($request->topic)) {
+        $query->whereHas('user', function ($q) use ($request) {
+            $q->where('category', $request->topic);
+        });
+    }
+
+    $posts = $query->get();
+
+    return view('dashboard', compact('posts'));
+}
+
+
 
 public function loginSubmit(Request $request)
 {
@@ -71,29 +99,35 @@ public function register()
     }
 
     public function registerSubmit(Request $request)
-    {
-        $request->validate([
-            'role' => 'required|in:user,astrologer',
-            'name' => 'required|string|max:255',
-            'phone' => 'required|digits:10|unique:users,phone',
-            'email' => 'nullable|email|unique:users,email',
-            'password' => 'required|min:6|confirmed',
-'expertise' => 'nullable',
-            'experience_years' => 'nullable',
-        ]);
+    {$request->validate([
+    'role' => 'required|in:user,astrologer',
+    'name' => 'required|string|max:255',
+    'phone' => 'required|digits:10|unique:users,phone',
+    'email' => 'nullable|email|unique:users,email',
+    'password' => 'required|min:6|confirmed',
 
-        DB::table('users')->insert([
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'email' => $request->email,
-            'role' => $request->role,
-            'expertise' => $request->role === 'astrologer' ? $request->expertise : null,
-            'experience_years' => $request->role === 'astrologer' ? $request->experience_years : null,
-            'bio' => $request->role === 'astrologer' ? $request->bio : null,
-            'password' => Hash::make($request->password),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+    // Astrologer-only
+    'expertise' => 'nullable|string|max:255',
+    'category' => 'nullable|string|in:Vedic Astrology,Horoscopes,Zodiac Signs,Planetary Transit,Numerology,Tarot',
+    'experience_years' => 'nullable|integer|min:0',
+    'bio' => 'nullable|string',
+]);
+DB::table('users')->insert([
+    'name' => $request->name,
+    'phone' => $request->phone,
+    'email' => $request->email,
+    'role' => $request->role,
+
+    'expertise' => $request->role === 'astrologer' ? $request->expertise : null,
+    'category' => $request->role === 'astrologer' ? $request->category : null,
+    'experience_years' => $request->role === 'astrologer' ? $request->experience_years : null,
+    'bio' => $request->role === 'astrologer' ? $request->bio : null,
+
+    'password' => Hash::make($request->password),
+    'created_at' => now(),
+    'updated_at' => now(),
+]);
+
 
         return redirect()->route('login')->with('success', 'Registration successful. Please login.');
     }

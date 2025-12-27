@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
+use App\Models\Comment;
+use App\Models\CommentLike;
+
+
 
 class PostController extends Controller
 {
@@ -60,6 +64,103 @@ if ($request->hasFile('media')) {
     ]);
 
     return redirect()->back()->with('success', 'Post published successfully!');
+}
+public function like($id)
+{
+    $post = Post::findOrFail($id);
+    $userId = session('user_id'); // using session instead of auth()->id()
+
+    if (!$userId) {
+        // Redirect if no user in session
+        return redirect()->route('login')->with('error', 'Please login to like posts.');
+    }
+
+    // Check if the user already liked this post
+    $existingLike = $post->likes()->where('user_id', $userId)->first();
+
+    if ($existingLike) {
+        // User already liked → remove like (unlike)
+        $existingLike->delete();
+        $message = 'Post unliked';
+    } else {
+        // User has not liked yet → create like
+        $post->likes()->create([
+            'user_id' => $userId,
+            'post_id' => $post->id, // optional if your relationship auto-fills post_id
+        ]);
+        $message = 'Post liked';
+    }
+
+    return back()->with('status', $message);
+}
+
+public function replies()
+{
+    return $this->hasMany(Comment::class, 'parent_id')->with('user');
+}
+
+   public function storecomments(Request $request, $postId)
+    {
+        $request->validate([
+            'comment' => 'required|string|max:1000',
+            'parent_id' => 'nullable|exists:comments,id'
+        ]);
+
+        $userId = session('user_id'); // using session user_id
+
+        if (!$userId) {
+            return redirect()->back()->with('error', 'You must be logged in to comment.');
+        }
+
+        Comment::create([
+            'post_id' => $postId,
+            'user_id' => $userId,
+            'parent_id' => $request->parent_id, // null for parent comment
+            'comment' => $request->comment,
+        ]);
+
+        return redirect()->back()->with('success', 'Comment added successfully!');
+    }
+    public function show(Post $post, Request $request)
+{
+    // Load post relations
+    $post->load(['user', 'likes']);
+
+    // Determine sort type: recent (default) or popular
+    $sort = $request->get('sort', 'recent');
+
+    // Load comments with user and replies, sorted
+    $commentsQuery = $post->comments()->with(['user', 'replies.user']);
+
+    if ($sort === 'popular') {
+        // Assuming you have likes_count for comments
+        $commentsQuery->withCount('likes')->orderByDesc('likes_count');
+    } else {
+        $commentsQuery->orderByDesc('created_at'); // recent
+    }
+
+    $comments = $commentsQuery->get();
+
+    return view('posts.show', compact('post', 'comments', 'sort'));
+}
+
+public function likecomment($id)
+{
+    $like = CommentLike::where([
+        'comment_id' => $id,
+        'user_id'    => session('user_id')
+    ])->first();
+
+    if ($like) {
+        $like->delete(); // unlike
+    } else {
+        CommentLike::create([
+            'comment_id' => $id,
+            'user_id'    => session('user_id')
+        ]);
+    }
+
+    return back();
 }
 
 }
