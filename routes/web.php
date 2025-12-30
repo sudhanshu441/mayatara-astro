@@ -37,7 +37,9 @@ Route::post('/logout', function () {
 
    Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');
 
-Route::post('/posts/{id}/like', [PostController::class, 'like'])->name('posts.like');
+Route::post('/posts/{id}/like', [PostController::class, 'like'])
+    ->name('posts.like');
+
 
 
 Route::post('/posts/{post}/comment', [PostController::class, 'storecomments'])

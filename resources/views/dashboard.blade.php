@@ -51,7 +51,7 @@
   </style>
 </head>
 
-<body class="bg-[#070A1A]">
+<body class="bg-[#070A1A]"  id="postsContainer">
   <!-- HEADER -->
   <header class="sticky top-0 z-50 bg-[rgba(11,16,35,0.4)] backdrop-blur-xl border-b border-white/10">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -155,81 +155,120 @@
     <!-- SIDEBAR (Desktop) -->
 <aside id="sidebarContainer" class="hidden lg:block w-[280px] shrink-0">
     <div id="filtersSpacer"></div>
+
     <div id="filtersCard"
          class="filters-card-wrapper rounded-2xl border border-white/10 bg-gradient-to-b from-[#15183A] to-[#0B0E22] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.55)]">
+
         <h2 class="text-lg font-semibold mb-4 text-white/90">Filters</h2>
 
+        @php
+            $currentSort  = request('sort', 'newest');
+            $currentTopic = request('topic');
+        @endphp
+
         <div class="space-y-5">
+
             <!-- Sort By -->
             <div>
                 <p class="text-xs font-semibold mb-2 text-white/80">Sort By</p>
+
                 <div class="space-y-2">
-                    @php $currentSort = request('sort') @endphp
+                    @foreach([
+                        'newest'   => 'Newest First',
+                        'popular'  => 'Most Popular',
+                        'trending' => 'Trending'
+                    ] as $sortKey => $label)
 
-                    <a href="{{ route('dashboard', ['sort' => 'newest', 'topic' => request('topic')]) }}"
-                       class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border 
-                              {{ $currentSort == 'newest' ? 'border-purple-500/50 bg-purple-600/20 text-white' : 'border-white/10 bg-white/5 text-white/85 hover:bg-white/10 hover:border-white/20' }}
-                              text-sm font-semibold text-left cursor-pointer transition-all duration-200">
-                        <svg class="w-4 h-4 text-white/90" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="9"></circle>
-                            <path d="M12 7v6l4 2"></path>
-                        </svg>
-                        <span>Newest First</span>
-                    </a>
+                        <button
+                            onclick="applyFilters({ sort: '{{ $sortKey }}' })"
+                            class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border
+                            {{ $currentSort === $sortKey
+                                ? 'border-purple-500/50 bg-purple-600/20 text-white'
+                                : 'border-white/10 bg-white/5 text-white/85 hover:bg-white/10 hover:border-white/20'
+                            }}
+                            text-sm font-semibold text-left cursor-pointer transition-all duration-200">
 
-                    <a href="{{ route('dashboard', ['sort' => 'popular', 'topic' => request('topic')]) }}"
-                       class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border 
-                              {{ $currentSort == 'popular' ? 'border-purple-500/50 bg-purple-600/20 text-white' : 'border-white/10 bg-white/5 text-white/85 hover:bg-white/10 hover:border-white/20' }}
-                              text-sm font-semibold text-left cursor-pointer transition-all duration-200">
-                        <svg class="w-4 h-4 text-white/75" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M3 17l6-6 4 4 7-7"></path>
-                            <path d="M14 8h6v6"></path>
-                        </svg>
-                        <span>Most Popular</span>
-                    </a>
+                            @if($sortKey === 'newest')
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="9"></circle>
+                                    <path d="M12 7v6l4 2"></path>
+                                </svg>
+                            @elseif($sortKey === 'popular')
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 17l6-6 4 4 7-7"></path>
+                                    <path d="M14 8h6v6"></path>
+                                </svg>
+                            @else
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 22c4 0 7-3 7-7 0-3-2-5-3-7-1 2-2 3-4 4 0-3-2-5-4-7 0 3-3 5-3 10 0 4 3 7 7 7Z"></path>
+                                </svg>
+                            @endif
 
-                    <a href="{{ route('dashboard', ['sort' => 'trending', 'topic' => request('topic')]) }}"
-                       class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border 
-                              {{ $currentSort == 'trending' ? 'border-purple-500/50 bg-purple-600/20 text-white' : 'border-white/10 bg-white/5 text-white/85 hover:bg-white/10 hover:border-white/20' }}
-                              text-sm font-semibold text-left cursor-pointer transition-all duration-200">
-                        <svg class="w-4 h-4 text-white/75" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 22c4 0 7-3 7-7 0-3-2-5-3-7-1 2-2 3-4 4 0-3-2-5-4-7 0 3-3 5-3 10 0 4 3 7 7 7Z"></path>
-                        </svg>
-                        <span>Trending</span>
-                    </a>
+                            <span>{{ $label }}</span>
+                        </button>
+                    @endforeach
                 </div>
             </div>
 
             <!-- Topics -->
             <div>
                 <p class="text-xs font-semibold mb-2 text-white/80">Topics</p>
-                <div class="space-y-2">
-                    @php $currentTopic = request('topic') @endphp
 
+                <div class="space-y-2">
                     @foreach(['Vedic Astrology','Horoscopes','Zodiac Signs','Planetary Transit','Numerology','Tarot'] as $topic)
-                        <a href="{{ route('dashboard', ['topic' => $topic, 'sort' => request('sort')]) }}"
-                           class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border 
-                                  {{ $currentTopic == $topic ? 'border-purple-500/50 bg-purple-600/20 text-white' : 'border-white/10 bg-white/5 text-white/85 hover:bg-white/10 hover:border-white/20' }}
-                                  text-sm font-semibold text-left cursor-pointer transition-all duration-200">
-                            <svg class="w-4 h-4 text-white/75" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <button
+                            onclick="applyFilters({ topic: '{{ $topic }}' })"
+                            class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border
+                            {{ $currentTopic === $topic
+                                ? 'border-purple-500/50 bg-purple-600/20 text-white'
+                                : 'border-white/10 bg-white/5 text-white/85 hover:bg-white/10 hover:border-white/20'
+                            }}
+                            text-sm font-semibold text-left cursor-pointer transition-all duration-200">
+
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M4 19a2 2 0 0 0 2 2h14"></path>
                                 <path d="M6 2h14v20H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z"></path>
                             </svg>
+
                             <span>{{ $topic }}</span>
-                        </a>
+                        </button>
                     @endforeach
                 </div>
             </div>
+
         </div>
     </div>
 </aside>
+<script>
+let filters = {
+    sort: "{{ request('sort', 'newest') }}",
+    topic: "{{ request('topic') }}"
+};
+
+function applyFilters(newFilters) {
+    filters = { ...filters, ...newFilters };
+
+    const query = new URLSearchParams(filters).toString();
+
+    fetch(`{{ route('dashboard') }}?${query}`, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(res => res.text())
+    .then(html => {
+        document.getElementById('postsContainer').innerHTML = html;
+
+        // Update URL without reload
+        window.history.pushState({}, '', `?${query}`);
+    })
+    .catch(err => console.error(err));
+}
+</script>
+
 
       <!-- POSTS FEED -->
-      <div class="flex-1 space-y-6">
+      <div class="flex-1 space-y-6" >
         <!-- Post Card 1 -->
      @foreach ($posts as $post)
 <article class="rounded-3xl border border-white/10 bg-gradient-to-b cursor-pointer from-[#1B1E47] to-[#121538] p-6 md:p-8 shadow-[0_30px_80px_rgba(0,0,0,0.55)]">
@@ -280,20 +319,69 @@
         <div class="flex items-center gap-6 text-white/65">
 
             {{-- Like Button --}}
-           <form action="{{ route('posts.like', $post->id) }}" method="POST">
-    @csrf
-    @php
-        $userLiked = $post->likes->contains('user_id', session('user_id'));
-    @endphp
-    <button type="submit" aria-label="Like Post" class="flex items-center gap-2 cursor-pointer hover:text-white transition-colors">
-        <svg class="w-5 h-5" viewBox="0 0 24 24" 
-             fill="{{ $userLiked ? 'red' : 'none' }}" 
-             stroke="{{ $userLiked ? 'red' : 'currentColor' }}" stroke-width="2">
-            <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
-        </svg>
-        <span class="text-sm font-medium">{{ $post->likes->count() }}</span>
-    </button>
-</form>
+          @php
+    $userLiked = $post->likes->contains('user_id', session('user_id'));
+@endphp
+
+<button 
+    onclick="toggleLike({{ $post->id }})"
+    class="flex items-center gap-2 hover:text-white transition-colors"
+>
+    <svg id="like-icon-{{ $post->id }}"
+        class="w-5 h-5"
+        viewBox="0 0 24 24"
+        fill="{{ $userLiked ? 'red' : 'none' }}"
+        stroke="{{ $userLiked ? 'red' : 'currentColor' }}"
+        stroke-width="2">
+        <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/>
+    </svg>
+
+    <span id="like-count-{{ $post->id }}">
+        {{ $post->likes->count() }}
+    </span>
+</button>
+<script>
+function toggleLike(postId) {
+
+    // Laravel route with placeholder
+    let url = "{{ route('posts.like', ':id') }}";
+    url = url.replace(':id', postId);
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json',
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Not logged in');
+        }
+        return response.json();
+    })
+    .then(data => {
+        const icon  = document.getElementById(`like-icon-${postId}`);
+        const count = document.getElementById(`like-count-${postId}`);
+
+        if (data.liked) {
+            icon.setAttribute('fill', 'red');
+            icon.setAttribute('stroke', 'red');
+        } else {
+            icon.setAttribute('fill', 'none');
+            icon.setAttribute('stroke', 'currentColor');
+        }
+
+        count.innerText = data.likes_count;
+    })
+    .catch(err => {
+        alert('Please login to like this post');
+        console.error(err);
+    });
+}
+</script>
+
+
 
             {{-- Comment Count --}}
             <div class="flex items-center gap-2">
@@ -307,47 +395,7 @@
         <p class="text-xs sm:text-sm text-white/55">5 min read</p>
     </div>
 
-    {{-- Comment Form --}}
-    <!-- <form action="{{ route('comments.store', $post->id) }}" method="POST" class="mt-3 flex gap-2">
-        @csrf
-        <input type="text" name="comment" placeholder="Add a comment..." class="flex-1 p-2 rounded-lg text-sm text-white/90 bg-white/5 border border-white/10" required>
-        <button type="submit" class="px-4 py-2 bg-amber-400 rounded-lg text-black font-semibold text-sm">Post</button>
-    </form> -->
-
-    {{-- Display Comments --}}
-   <!-- {{-- Display Comments --}}
-@foreach($post->comments as $comment)
-    <div class="flex gap-3 mb-2">
-        <div class="w-8 h-8 rounded-full overflow-hidden border border-white/10">
-            <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=50" alt="User" class="w-full h-full object-cover">
-        </div>
-        <div class="bg-white/5 p-2 rounded-xl flex-1">
-            <p class="text-white/90 text-sm font-medium">{{ $comment->user->name ?? 'Anonymous' }}</p>
-            <p class="text-white/70 text-sm">{{ $comment->comment }}</p>
-            <span class="text-xs text-white/50">{{ $comment->created_at->diffForHumans() }}</span>
-
-            {{-- Reply Form (only for post owner) --}}
-            @if(session('user_id')== $post->user_id)
-                <form action="{{ route('comments.store', $post->id) }}" method="POST" class="mt-2 flex gap-2 ml-6">
-                    @csrf
-                    <input type="hidden" name="parent_id" value="{{ $comment->id }}">
-                    <input type="text" name="comment" placeholder="Reply to this comment..." class="flex-1 p-2 rounded-lg text-sm text-white/90 bg-white/5 border border-white/10" required>
-                    <button type="submit" class="px-4 py-2 bg-amber-400 rounded-lg text-black font-semibold text-sm">Reply</button>
-                </form>
-            @endif
-
-            {{-- Display Replies --}}
-            @foreach($comment->replies as $reply)
-                <div class="ml-6 mt-2 bg-white/10 p-2 rounded-lg">
-                    <p class="text-white/90 text-sm font-medium">{{ $reply->user->name ?? 'Anonymous' }}</p>
-                    <p class="text-white/70 text-sm">{{ $reply->comment }}</p>
-                    <span class="text-xs text-white/50">{{ $reply->created_at->diffForHumans() }}</span>
-                </div>
-            @endforeach
-
-        </div>
-    </div>
-@endforeach -->
+   
 
 
 </article>

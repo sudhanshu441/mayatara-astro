@@ -68,59 +68,78 @@ if ($request->hasFile('media')) {
 public function like($id)
 {
     $post = Post::findOrFail($id);
-    $userId = session('user_id'); // using session instead of auth()->id()
+    $userId = session('user_id');
 
+    // If not logged in
     if (!$userId) {
-        // Redirect if no user in session
-        return redirect()->route('login')->with('error', 'Please login to like posts.');
+        return response()->json([
+            'error' => 'Unauthorized'
+        ], 401);
     }
 
-    // Check if the user already liked this post
-    $existingLike = $post->likes()->where('user_id', $userId)->first();
+    // Check if already liked
+    $existingLike = $post->likes()
+        ->where('user_id', $userId)
+        ->first();
 
     if ($existingLike) {
-        // User already liked → remove like (unlike)
+        // Unlike
         $existingLike->delete();
-        $message = 'Post unliked';
+        $liked = false;
     } else {
-        // User has not liked yet → create like
+        // Like
         $post->likes()->create([
-            'user_id' => $userId,
-            'post_id' => $post->id, // optional if your relationship auto-fills post_id
+            'user_id' => $userId
         ]);
-        $message = 'Post liked';
+        $liked = true;
     }
 
-    return back()->with('status', $message);
+    return response()->json([
+        'liked' => $liked,
+        'likes_count' => $post->likes()->count()
+    ]);
 }
+
 
 public function replies()
 {
     return $this->hasMany(Comment::class, 'parent_id')->with('user');
 }
+public function storecomments(Request $request, $postId)
+{
+    $request->validate([
+        'comment' => 'required|string|max:1000',
+        'parent_id' => 'nullable|exists:comments,id'
+    ]);
 
-   public function storecomments(Request $request, $postId)
-    {
-        $request->validate([
-            'comment' => 'required|string|max:1000',
-            'parent_id' => 'nullable|exists:comments,id'
-        ]);
+    $userId = session('user_id');
 
-        $userId = session('user_id'); // using session user_id
-
-        if (!$userId) {
-            return redirect()->back()->with('error', 'You must be logged in to comment.');
+    if (!$userId) {
+        // For AJAX request, return JSON error
+        if ($request->ajax()) {
+            return response()->json(['error' => 'You must be logged in to comment.'], 401);
         }
-
-        Comment::create([
-            'post_id' => $postId,
-            'user_id' => $userId,
-            'parent_id' => $request->parent_id, // null for parent comment
-            'comment' => $request->comment,
-        ]);
-
-        return redirect()->back()->with('success', 'Comment added successfully!');
+        return redirect()->back()->with('error', 'You must be logged in to comment.');
     }
+
+    // Create the comment
+    $comment = Comment::create([
+        'post_id' => $postId,
+        'user_id' => $userId,
+        'parent_id' => $request->parent_id, // null for parent comment
+        'comment' => $request->comment,
+    ]);
+
+    // If AJAX, return HTML snippet for the new comment/reply
+  if ($request->ajax()) {
+    $html = view('partials.comment', compact('comment'))->render();
+    return response()->json(['html' => $html]);
+}
+
+
+    return redirect()->back()->with('success', 'Comment added successfully!');
+}
+
     public function show(Post $post, Request $request)
 {
     // Load post relations
@@ -144,23 +163,46 @@ public function replies()
     return view('posts.show', compact('post', 'comments', 'sort'));
 }
 
-public function likecomment($id)
+public function likecomment($id, Request $request)
 {
+    $userId = session('user_id');
+    if (!$userId) {
+        if ($request->ajax()) {
+            return response()->json(['error' => 'You must be logged in to like.'], 401);
+        }
+        return redirect()->back()->with('error', 'You must be logged in to like.');
+    }
+
+    // Check if the user already liked the comment
     $like = CommentLike::where([
         'comment_id' => $id,
-        'user_id'    => session('user_id')
+        'user_id'    => $userId
     ])->first();
 
     if ($like) {
         $like->delete(); // unlike
+        $liked = false;
     } else {
         CommentLike::create([
             'comment_id' => $id,
-            'user_id'    => session('user_id')
+            'user_id'    => $userId
+        ]);
+        $liked = true;
+    }
+
+    $comment = \App\Models\Comment::find($id);
+    $likesCount = $comment->likes()->count();
+
+    // If AJAX request, return JSON
+    if ($request->ajax()) {
+        return response()->json([
+            'likesCount' => $likesCount,
+            'liked' => $liked
         ]);
     }
 
     return back();
 }
+
 
 }

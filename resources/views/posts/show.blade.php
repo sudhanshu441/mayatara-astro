@@ -20,7 +20,7 @@
   </style>
 </head>
 
-<body class="bg-[#070A1A] text-white">
+<body class="bg-[#070A1A] text-white" id="commentsContainer">
 
 <!-- HEADER -->
 <header class="sticky top-0 z-50 bg-[rgba(11,16,35,0.4)] backdrop-blur-xl border-b border-white/10">
@@ -183,133 +183,96 @@
       Comments ({{ $post->comments->count() }})
     </h3>
 
-   <div class="flex items-center gap-2 text-xs mb-4">
-    <a href="{{ route('posts.show', ['post' => $post->id, 'sort' => 'recent']) }}" 
-       class="px-3 py-1.5 rounded-md {{ $sort === 'recent' ? 'bg-purple-600 text-white font-medium' : 'text-white/50 hover:text-white hover:bg-white/5 transition' }}">
-       Recent
+<div class="flex items-center gap-2 text-xs mb-4">
+    <a href="javascript:void(0)"
+       onclick="loadComments('recent')"
+       id="recentBtn"
+       class="px-3 py-1.5 rounded-md bg-purple-600 text-white font-medium">
+        Recent
     </a>
-    <a href="{{ route('posts.show', ['post' => $post->id, 'sort' => 'popular']) }}" 
-       class="px-3 py-1.5 rounded-md {{ $sort === 'popular' ? 'bg-purple-600 text-white font-medium' : 'text-white/50 hover:text-white hover:bg-white/5 transition' }}">
-       Popular
+
+    <a href="javascript:void(0)"
+       onclick="loadComments('popular')"
+       id="popularBtn"
+       class="px-3 py-1.5 rounded-md text-white/50 hover:text-white hover:bg-white/5 transition">
+        Popular
     </a>
 </div>
 
-  </div>
 
-  <!-- Comment Input -->
-  <form action="{{ route('comments.store', $post->id) }}" method="POST" class="mb-10">
+  </div>
+<!-- Comment Input -->
+<form action="{{ route('comments.store', $post->id) }}" method="POST" class="mb-10 comment-form">
     @csrf
     <div class="flex gap-3">
-      <img src="{{ auth()->user()->avatar ?? 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200' }}"
-           class="w-9 h-9 rounded-full object-cover border border-white/10">
-
-      <div class="flex-1">
-        <textarea name="comment" rows="3" required
-          placeholder="Share your thoughts..."
-          class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10
-                 text-white placeholder-white/40 text-sm resize-none
-                 focus:outline-none focus:border-purple-500/50"></textarea>
-
-        <div class="flex justify-end mt-2">
-          <button type="submit"
-            class="px-4 py-1.5 rounded-md bg-purple-600 hover:bg-purple-700
-                   text-white text-sm font-medium transition">
-            Comment
-          </button>
-        </div>
-      </div>
-    </div>
-  </form>
-
-  <!-- COMMENTS LIST -->
-  <div class="space-y-8">
-@foreach($comments as $comment)
-
-      <div class="flex gap-3">
-        <img src="{{ $comment->user->avatar ?? 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200' }}"
+        <img src="{{ auth()->user()->avatar ?? 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200' }}"
              class="w-9 h-9 rounded-full object-cover border border-white/10">
-
         <div class="flex-1">
-          <div class="flex items-center gap-2">
-            <p class="text-sm font-semibold text-white">
-              {{ $comment->user->name ?? 'Anonymous' }}
-            </p>
-            <span class="text-xs text-white/40">
-              • {{ $comment->created_at->diffForHumans() }}
-            </span>
-          </div>
+            <textarea name="comment" rows="3" required placeholder="Share your thoughts..."
+                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/40 text-sm resize-none focus:outline-none focus:border-purple-500/50"></textarea>
+            <div class="flex justify-end mt-2">
+                <button type="submit"
+                        class="px-4 py-1.5 rounded-md bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium transition">
+                    Comment
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
 
-          <p class="text-sm text-white/80 mt-1 leading-relaxed">
-            {{ $comment->comment }}
-          </p>
+<!-- COMMENTS LIST -->
+<div class="space-y-8 comments-list">
+@foreach($comments as $comment)
+<div class="flex gap-3">
+    <img src="{{ $comment->user->avatar ?? 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200' }}"
+         class="w-9 h-9 rounded-full object-cover border border-white/10">
+    <div class="flex-1">
+        <div class="flex items-center gap-2">
+            <p class="text-sm font-semibold text-white">{{ $comment->user->name ?? 'Anonymous' }}</p>
+            <span class="text-xs text-white/40">• {{ $comment->created_at->diffForHumans() }}</span>
+        </div>
+        <p class="text-sm text-white/80 mt-1 leading-relaxed">{{ $comment->comment }}</p>
 
         <!-- Actions -->
-<div class="flex items-center gap-4 mt-2 text-xs text-white/50">
-    <form action="{{ route('comments.like', $comment->id) }}" method="POST">
-        @csrf
-        @php
-            $userLiked = $comment->likes->contains('user_id', session('user_id'));
-            $likesCount = $comment->likes->count();
-        @endphp
-        <button type="submit" class="transition flex items-center gap-1">
-            <span class="{{ $likesCount > 0 ? ($userLiked ? 'text-red-500' : 'text-gray-400 hover:text-purple-400') : 'text-white/30' }}">
-                ❤️
-            </span>
-            <span>{{ $likesCount }}</span>
-        </button>
-    </form>
+        <div class="flex items-center gap-4 mt-2 text-xs text-white/50">
+            <form action="{{ route('comments.like', $comment->id) }}" method="POST" class="like-form">
+                @csrf
+                @php
+                    $userLiked = $comment->likes->contains('user_id', session('user_id'));
+                    $likesCount = $comment->likes->count();
+                @endphp
+                <button type="submit" class="transition flex items-center gap-1">
+                    <span class="{{ $userLiked ? 'text-red-500' : ($likesCount > 0 ? 'text-gray-400 hover:text-purple-400' : 'text-white/30') }} like-icon">❤️</span>
+                    <span class="likes-count">{{ $likesCount }}</span>
+                </button>
+            </form>
+            <button type="button" onclick="toggleReply('{{ $comment->id }}')" class="hover:text-purple-400 transition">Reply</button>
+        </div>
 
-    <button type="button"
-        onclick="toggleReply('{{ $comment->id }}')"
-        class="hover:text-purple-400 transition">
-        Reply
-    </button>
+        <!-- Reply Form -->
+        @if(session('user_id') == $post->user_id)
+       <form id="reply-form-{{ $comment->id }}" 
+      action="{{ route('comments.store', $post->id) }}" 
+      method="POST" 
+      class="mt-3 ml-6 flex gap-2 hidden reply-form">
+    @csrf
+    <input type="hidden" name="parent_id" value="{{ $comment->id }}">
+    <input type="text" name="comment" required placeholder="Write a reply..." class="flex-1 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-purple-500/50">
+    <button type="submit" class="px-3 py-2 rounded-md bg-purple-600 hover:bg-purple-700 text-white text-xs font-medium">Reply</button>
+</form>
+
+        @endif
+
+        <!-- Replies -->
+     <div class="replies-list mt-5 ml-6 pl-4 border-l border-white/10">
+    @foreach($comment->replies()->latest()->get() as $reply)
+        @include('partials.comment', ['comment' => $reply])
+    @endforeach
 </div>
 
-
-
-          <!-- Reply Form (hidden by default) -->
-          @if(session('user_id') == $post->user_id)
-            <form id="reply-form-{{ $comment->id }}"
-                  action="{{ route('comments.store', $post->id) }}"
-                  method="POST"
-                  class="mt-3 ml-6 flex gap-2 hidden">
-              @csrf
-              <input type="hidden" name="parent_id" value="{{ $comment->id }}">
-
-              <input type="text" name="comment" required
-                placeholder="Write a reply..."
-                class="flex-1 px-3 py-2 rounded-lg bg-white/5 border border-white/10
-                       text-white text-sm focus:outline-none focus:border-purple-500/50">
-
-              <button type="submit"
-                class="px-3 py-2 rounded-md bg-purple-600 hover:bg-purple-700
-                       text-white text-xs font-medium">
-                Reply
-              </button>
-            </form>
-          @endif
-
-          <!-- Replies -->
-          @foreach($comment->replies()->latest()->get() as $reply)
-            <div class="mt-4 ml-6 pl-4 border-l border-white/10">
-              <p class="text-xs font-semibold text-white">
-                {{ $reply->user->name ?? 'Anonymous' }}
-                <span class="text-white/40 font-normal">
-                  • {{ $reply->created_at->diffForHumans() }}
-                </span>
-              </p>
-              <p class="text-sm text-white/70 mt-1">
-                {{ $reply->comment }}
-              </p>
-            </div>
-          @endforeach
-
-        </div>
-      </div>
-
-    @endforeach
-  </div>
+    </div>
+</div>
+@endforeach
 </div>
 
 <!-- TOGGLE REPLY SCRIPT -->
@@ -322,6 +285,39 @@
   }
 </script>
 
+<script>
+function loadComments(sort) {
+
+    // Button active state
+    document.getElementById('recentBtn').className =
+        sort === 'recent'
+        ? 'px-3 py-1.5 rounded-md bg-purple-600 text-white font-medium'
+        : 'px-3 py-1.5 rounded-md text-white/50 hover:text-white hover:bg-white/5 transition';
+
+    document.getElementById('popularBtn').className =
+        sort === 'popular'
+        ? 'px-3 py-1.5 rounded-md bg-purple-600 text-white font-medium'
+        : 'px-3 py-1.5 rounded-md text-white/50 hover:text-white hover:bg-white/5 transition';
+
+    // AJAX call
+    const xhr = new XMLHttpRequest();
+    xhr.open(
+        "GET",
+        "{{ route('posts.show', $post->id) }}?sort=" + sort,
+        true
+    );
+
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+    xhr.onload = function () {
+        if (this.status === 200) {
+            document.getElementById('commentsContainer').innerHTML = this.responseText;
+        }
+    };
+
+    xhr.send();
+}
+</script>
 
 </article>
 
@@ -330,6 +326,70 @@
 <footer class="mt-12 border-t border-white/10 py-6 text-center text-sm text-white/50">
   © {{ date('Y') }} Mayatara. All rights reserved.
 </footer>
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
+<script>
+$(document).ready(function() {
+
+    // Submit new comment via AJAX
+    $('form.comment-form').submit(function(e) {
+        e.preventDefault();  // prevent page reload
+        let form = $(this);
+        let url = form.attr('action'); // route to store comment
+        let data = form.serialize();
+
+        // AJAX POST request
+        $.post(url, data, function(response) {
+            // Prepend the returned HTML to the comments list
+            $('.comments-list').prepend(response.html);
+            form[0].reset(); // clear the form
+        }).fail(function(xhr) {
+            alert(xhr.responseText || 'Something went wrong.');
+        });
+    });
+
+    // Like comment via AJAX
+    $(document).on('submit', 'form.like-form', function(e) {
+        e.preventDefault();
+        let form = $(this);
+        let url = form.attr('action');
+
+        $.post(url, form.serialize(), function(response) {
+            form.find('span.likes-count').text(response.likesCount);
+            if(response.liked) {
+                form.find('span.like-icon').removeClass('text-gray-400 hover:text-purple-400 text-white/30').addClass('text-red-500');
+            } else {
+                form.find('span.like-icon').removeClass('text-red-500').addClass('text-gray-400 hover:text-purple-400');
+            }
+        });
+    });
+
+    // Reply toggle
+    window.toggleReply = function(id) {
+        $('#reply-form-' + id).toggleClass('hidden');
+    };
+
+    // Submit reply via AJAX
+    // Submit reply via AJAX
+$(document).on('submit', 'form.reply-form', function(e) {
+    e.preventDefault();
+    let form = $(this);
+    let url = form.attr('action');
+    let data = form.serialize();
+
+    $.post(url, data, function(response) {
+        // Insert the new reply before the reply form
+        form.before(response.html);
+        form[0].reset();      // clear input
+        form.addClass('hidden'); // hide reply form after submit
+    }).fail(function(xhr) {
+        alert(xhr.responseText || 'Something went wrong.');
+    });
+});
+
+
+});
+</script>
 
 </body>
 </html>
