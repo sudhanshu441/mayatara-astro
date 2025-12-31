@@ -139,29 +139,44 @@ public function storecomments(Request $request, $postId)
 
     return redirect()->back()->with('success', 'Comment added successfully!');
 }
-
-    public function show(Post $post, Request $request)
+public function show(Request $request, $id)
 {
-    // Load post relations
-    $post->load(['user', 'likes']);
+    $post = Post::with(['user', 'likes'])->findOrFail($id);
 
-    // Determine sort type: recent (default) or popular
     $sort = $request->get('sort', 'recent');
 
-    // Load comments with user and replies, sorted
-    $commentsQuery = $post->comments()->with(['user', 'replies.user']);
+    $commentsQuery = Comment::with([
+            'user',
+            'likes',
+            'replies.user',
+            'replies.likes'
+        ])
+        ->where('post_id', $post->id)
+        ->whereNull('parent_id');
 
     if ($sort === 'popular') {
-        // Assuming you have likes_count for comments
-        $commentsQuery->withCount('likes')->orderByDesc('likes_count');
+        $commentsQuery
+            ->withCount('likes')
+            ->orderBy('likes_count', 'desc');
     } else {
-        $commentsQuery->orderByDesc('created_at'); // recent
+        $commentsQuery->latest();
     }
 
     $comments = $commentsQuery->get();
 
-    return view('posts.show', compact('post', 'comments', 'sort'));
+    // ✅ AJAX: render SAME comment blade multiple times
+    if ($request->ajax()) {
+        $html = '';
+        foreach ($comments as $comment) {
+            $html .= view('partials.comment', compact('comment'))->render();
+        }
+        return $html;
+    }
+
+    // ✅ Normal page load
+    return view('posts.show', compact('post', 'comments'));
 }
+
 
 public function likecomment($id, Request $request)
 {

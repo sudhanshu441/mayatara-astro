@@ -43,5 +43,6 @@
             <p class="text-sm text-white/70 mt-1">{{ $reply->comment }}</p>
         </div>
         @endforeach
+        
     </div>
 </div>

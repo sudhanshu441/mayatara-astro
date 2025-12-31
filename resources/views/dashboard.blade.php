@@ -245,8 +245,23 @@ let filters = {
     topic: "{{ request('topic') }}"
 };
 
-function applyFilters(newFilters) {
-    filters = { ...filters, ...newFilters };
+function applyFilters(newFilters = {}) {
+
+    Object.keys(newFilters).forEach(key => {
+
+        // Toggle: if same value clicked → remove filter
+        if (filters[key] === newFilters[key]) {
+            delete filters[key];
+        } else {
+            filters[key] = newFilters[key];
+        }
+
+    });
+
+    // Default sort fallback
+    if (!filters.sort) {
+        filters.sort = 'newest';
+    }
 
     const query = new URLSearchParams(filters).toString();
 
@@ -385,14 +400,21 @@ function toggleLike(postId) {
 
             {{-- Comment Count --}}
             <div class="flex items-center gap-2">
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
-                </svg>
-                <span class="text-sm font-medium">{{ $post->comments->count() }}</span>
-            </div>
+    <a href="{{ route('posts.show', $post->id) }}"
+       class="flex items-center gap-1.5 text-white/80 hover:text-white transition">
+
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
+        </svg>
+
+        <span class="text-sm font-medium">
+            {{ $post->comments_count ?? $post->comments->count() }}
+        </span>
+    </a>
+</div>
+
 
         </div>
-        <p class="text-xs sm:text-sm text-white/55">5 min read</p>
     </div>
 
    

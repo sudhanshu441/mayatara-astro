@@ -129,17 +129,70 @@
   <div class="flex items-center gap-6">
 
     <!-- Like -->
-    <button
-      class="flex items-center gap-2 text-white/60 hover:text-red-400 transition-colors group">
-      <svg class="w-5 h-5 group-hover:scale-110 transition-transform"
-           viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path
-          d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
-      </svg>
-      <span class="text-sm font-medium">
+               {{-- Like Button --}}
+          @php
+    $userLiked = $post->likes->contains('user_id', session('user_id'));
+@endphp
+
+<button 
+    onclick="toggleLike({{ $post->id }})"
+    class="flex items-center gap-2 hover:text-white transition-colors"
+>
+    <svg id="like-icon-{{ $post->id }}"
+        class="w-5 h-5"
+        viewBox="0 0 24 24"
+        fill="{{ $userLiked ? 'red' : 'none' }}"
+        stroke="{{ $userLiked ? 'red' : 'currentColor' }}"
+        stroke-width="2">
+        <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/>
+    </svg>
+
+    <span id="like-count-{{ $post->id }}">
         {{ $post->likes->count() }}
-      </span>
-    </button>
+    </span>
+</button>
+<script>
+function toggleLike(postId) {
+
+    // Laravel route with placeholder
+    let url = "{{ route('posts.like', ':id') }}";
+    url = url.replace(':id', postId);
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json',
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Not logged in');
+        }
+        return response.json();
+    })
+    .then(data => {
+        const icon  = document.getElementById(`like-icon-${postId}`);
+        const count = document.getElementById(`like-count-${postId}`);
+
+        if (data.liked) {
+            icon.setAttribute('fill', 'red');
+            icon.setAttribute('stroke', 'red');
+        } else {
+            icon.setAttribute('fill', 'none');
+            icon.setAttribute('stroke', 'currentColor');
+        }
+
+        count.innerText = data.likes_count;
+    })
+    .catch(err => {
+        alert('Please login to like this post');
+        console.error(err);
+    });
+}
+</script>
+
+
 
     <!-- Comments -->
     <button
@@ -221,7 +274,7 @@
 </form>
 
 <!-- COMMENTS LIST -->
-<div class="space-y-8 comments-list">
+<div id="commentsWrapper" class="space-y-8 comments-list">
 @foreach($comments as $comment)
 <div class="flex gap-3">
     <img src="{{ $comment->user->avatar ?? 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200' }}"
@@ -289,33 +342,25 @@
 function loadComments(sort) {
 
     // Button active state
-    document.getElementById('recentBtn').className =
-        sort === 'recent'
-        ? 'px-3 py-1.5 rounded-md bg-purple-600 text-white font-medium'
-        : 'px-3 py-1.5 rounded-md text-white/50 hover:text-white hover:bg-white/5 transition';
+    document.getElementById('recentBtn').classList.remove('bg-purple-600', 'text-white');
+    document.getElementById('popularBtn').classList.remove('bg-purple-600', 'text-white');
 
-    document.getElementById('popularBtn').className =
-        sort === 'popular'
-        ? 'px-3 py-1.5 rounded-md bg-purple-600 text-white font-medium'
-        : 'px-3 py-1.5 rounded-md text-white/50 hover:text-white hover:bg-white/5 transition';
+    if (sort === 'recent') {
+        document.getElementById('recentBtn').classList.add('bg-purple-600', 'text-white');
+    } else {
+        document.getElementById('popularBtn').classList.add('bg-purple-600', 'text-white');
+    }
 
-    // AJAX call
-    const xhr = new XMLHttpRequest();
-    xhr.open(
-        "GET",
-        "{{ route('posts.show', $post->id) }}?sort=" + sort,
-        true
-    );
-
-    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-
-    xhr.onload = function () {
-        if (this.status === 200) {
-            document.getElementById('commentsContainer').innerHTML = this.responseText;
+    // AJAX request
+    fetch("{{ route('posts.show', $post->id) }}?sort=" + sort, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
         }
-    };
-
-    xhr.send();
+    })
+    .then(res => res.text())
+    .then(html => {
+        document.getElementById('commentsWrapper').innerHTML = html;
+    });
 }
 </script>
 
