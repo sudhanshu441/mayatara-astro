@@ -10,594 +10,509 @@
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
-    /* Custom scrollbar styling */
-    .filters-content::-webkit-scrollbar {
-      width: 5px;
+    :root {
+      --primary: #6366f1;
+      --primary-light: #818cf8;
+      --secondary: #8b5cf6;
+      --accent: #06b6d4;
+      --success: #10b981;
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8fafc;
+      --bg-tertiary: #f1f5f9;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --text-tertiary: #94a3b8;
+      --border: #e2e8f0;
     }
 
-    .filters-content::-webkit-scrollbar-track {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 10px;
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
     }
 
-    .filters-content::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 10px;
+    *::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
     }
 
-    .filters-content::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.25);
+    *::-webkit-scrollbar-track {
+      background: transparent;
     }
 
-    /* Smooth transitions for sticky sidebar */
-    .filters-card-wrapper {
+    *::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+
+    *::-webkit-scrollbar-thumb:hover {
+      background: #cbd5e1;
+    }
+
+    body {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+
+    .gradient-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    }
+
+    .gradient-light {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    }
+
+    .card-hover {
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* Floating action button styles */
-    .fab-button {
-      box-shadow: 0 8px 24px rgba(88, 28, 135, 0.4);
+    .card-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .community-card {
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--bg-primary);
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .community-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+    }
+
+    .post-card {
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
       transition: all 0.3s ease;
     }
 
-    .fab-button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 12px 32px rgba(88, 28, 135, 0.6);
+    .post-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     }
 
-    .fab-button:active {
-      transform: scale(0.95);
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge-primary {
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--primary);
+    }
+
+    .badge-success {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+    }
+
+    .avatar-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--bg-secondary);
+    }
+
+    .like-button {
+      transition: all 0.2s ease;
+    }
+
+    .like-button:hover {
+      transform: scale(1.1);
+    }
+
+    .like-button.liked svg {
+      fill: #ef4444;
+      color: #ef4444;
     }
   </style>
 </head>
 
-<body class="bg-[#070A1A]"  id="postsContainer">
+<body class="bg-slate-50">
   <!-- HEADER -->
-  <header class="sticky top-0 z-50 bg-[rgba(11,16,35,0.4)] backdrop-blur-xl border-b border-white/10">
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-200">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="h-16 flex items-center justify-between">
-        <a href="/" class="flex items-center gap-2 cursor-pointer">
-          <img class="w-8 h-8" src="{{ url('public\star.png') }}"   alt="Mayatara" />
-          <h1 class="text-lg sm:text-xl font-bold text-white">Mayatara</h1>
+        <a href="/" class="flex items-center gap-3 cursor-pointer">
+          <img src="{{ asset('public/logofiles/png/logo.png') }}"
+     alt="Logo"
+     style="width:80px;">
         </a>
 
         <!-- Desktop Nav -->
-        <nav class="hidden md:flex items-center gap-2">
-          <a href="#"
-            class="flex items-center gap-2 px-3 py-2 rounded-md text-white/70 hover:bg-white/5 transition-colors cursor-pointer">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round">
-              <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
-              <path
-                d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+        <nav class="hidden md:flex items-center gap-1">
+          <a href="#" class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
             </svg>
-            <span>Feed</span>
+            <span class="text-sm font-medium">Feed</span>
           </a>
-          <a  href="{{ route('posts.create') }}">
-            <button aria-label="Create Post" type="button"
-              class="flex items-center gap-2 px-3 py-2 rounded-md text-white/70 hover:bg-white/5 transition-colors cursor-pointer">
-              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                <path
-                  d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z" />
-              </svg>
-              <span>Create</span>
-            </button>
+          <a href="{{ route('posts.create') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 5v14M5 12h14"></path>
+            </svg>
+            <span class="text-sm font-medium">Create</span>
           </a>
         </nav>
-   <!-- Top Bar -->
 
-    <!-- Left (Title or Logo) -->
-   
-
-    <!-- Right (Profile + Logout) -->
-    <div class="flex items-center gap-6">
-
-        <!-- Profile -->
-        <div class="flex items-center gap-3 cursor-pointer">
-            <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white/10">
-                <img
-                    class="w-full h-full object-cover"
-                    src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200"
-                    alt="Profile"
-                />
+        <!-- Right Section -->
+        <div class="flex items-center gap-4">
+          <!-- Profile -->
+          <div class="flex items-center gap-3 cursor-pointer">
+            <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-slate-200 flex-shrink-0">
+              <img class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200" alt="Profile" />
             </div>
+            <p class="hidden sm:block text-sm font-semibold text-slate-900">{{ session('user_name', 'User') }}</p>
+          </div>
 
-            <p class="hidden sm:block text-base font-semibold text-white">
-                {{ session('user_name') }}
-            </p>
-        </div>
-
-        <!-- Logout -->
-        <form method="POST" action="{{ route('logout') }}"
-              onsubmit="return confirmLogout();">
+          <!-- Logout -->
+          <form method="POST" action="{{ route('logout') }}" onsubmit="return confirmLogout();" class="hidden sm:block">
             @csrf
-            <button type="submit"
-                class="px-4 py-2 rounded-lg text-red-400 hover:bg-red-500/10 hover:text-red-300 transition font-semibold">
-                Logout
+            <button type="submit" class="px-4 py-2 rounded-lg text-red-600 hover:bg-red-50 font-medium text-sm transition">
+              Logout
             </button>
-        </form>
-
-    </div>
-
-
+          </form>
+        </div>
       </div>
     </div>
   </header>
 
   <!-- MAIN CONTENT -->
-  <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 lg:py-10 pb-20 md:pb-6">
-    <!-- Header Section -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-      <div>
-        <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">Community Feed</h1>
-        <p class="text-base md:text-lg text-white/70">Discover insights from astrologers around the world</p>
+  <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Hero Section -->
+    <div class="mb-12">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8">
+        <div>
+          <h2 class="text-3xl md:text-3xl font-bold text-slate-900 mb-2">Discover insights from astrologers around the world</h2>
+          <!-- <p class="text-lg text-slate-600">Discover insights from astrologers around the world</p> -->
+        </div>
+        <a href="{{ route('posts.create') }}" class="inline-flex items-center gap-2 px-6 py-3 gradient-primary text-white rounded-lg font-semibold hover:shadow-lg transition-all">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12h14"></path>
+          </svg>
+          Create Post
+        </a>
       </div>
 
-      <!-- Create Post Button (Desktop) -->
-      <a  href="{{ route('posts.create') }}">
-        <button aria-label="create" type="button"
-          class="hidden md:inline-flex items-center gap-3 px-4 py-2 rounded-xl border border-white/10 bg-gradient-to-r from-[#2C1B74] to-[#17123B] text-white text-sm font-semibold shadow-[0_14px_40px_rgba(44,27,116,0.35)] hover:brightness-110 active:scale-[0.98] transition-all duration-300 cursor-pointer">
-          <span class="grid place-items-center w-9 h-9 rounded-lg bg-white/10 border border-white/10">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 20h9" />
-              <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5Z" />
-            </svg>
-          </span>
-          Create Post
-        </button>
-      </a>
+      <!-- Communities Section (YouTube Style) -->
+      <div class="mb-10">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-2xl font-bold text-slate-900">Trending Communities</h2>
+          <a href="#" class="text-primary font-semibold text-sm hover:underline">View all →</a>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+          @php
+            $communities = [
+              ['name' => 'Vedic Astrology', 'emoji' => '🌟', 'color' => 'from-blue-100 to-blue-50'],
+              ['name' => 'Horoscopes', 'emoji' => '♈', 'color' => 'from-purple-100 to-purple-50'],
+              ['name' => 'Numerology', 'emoji' => '🔢', 'color' => 'from-pink-100 to-pink-50'],
+              ['name' => 'Tarot', 'emoji' => '🃏', 'color' => 'from-orange-100 to-orange-50'],
+              ['name' => 'Planetary Transit', 'emoji' => '🪐', 'color' => 'from-green-100 to-green-50'],
+              ['name' => 'Zodiac Signs', 'emoji' => '♋', 'color' => 'from-red-100 to-red-50'],
+            ];
+          @endphp
+
+          @foreach($communities as $community)
+          <div class="community-card gradient-light border border-slate-200 p-4 text-center hover:shadow-md">
+            <div class="text-3xl mb-2">{{ $community['emoji'] }}</div>
+            <h3 class="font-semibold text-slate-900 text-sm">{{ $community['name'] }}</h3>
+            <p class="text-xs text-slate-500 mt-1">Join now</p>
+          </div>
+          @endforeach
+        </div>
+      </div>
     </div>
 
-    <div class="flex gap-6 lg:gap-8 items-start relative">
-    <!-- SIDEBAR (Desktop) -->
-<aside id="sidebarContainer" class="hidden lg:block w-[280px] shrink-0">
-    <div id="filtersSpacer"></div>
-
-    <div id="filtersCard"
-         class="filters-card-wrapper rounded-2xl border border-white/10 bg-gradient-to-b from-[#15183A] to-[#0B0E22] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.55)]">
-
-        <h2 class="text-lg font-semibold mb-4 text-white/90">Filters</h2>
-
-        @php
-            $currentSort  = request('sort', 'newest');
+    <!-- Main Feed Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Left Section - Filters (Desktop) -->
+      <aside class="hidden lg:block">
+        <div class="bg-white rounded-lg border border-slate-200 p-5 sticky top-24">
+          <h3 class="text-lg font-bold text-slate-900 mb-4">Filters</h3>
+          
+          @php
+            $currentSort = request('sort', 'newest');
             $currentTopic = request('topic');
-        @endphp
+          @endphp
 
-        <div class="space-y-5">
-
+          <div class="space-y-6">
             <!-- Sort By -->
             <div>
-                <p class="text-xs font-semibold mb-2 text-white/80">Sort By</p>
-
-                <div class="space-y-2">
-                    @foreach([
-                        'newest'   => 'Newest First',
-                        'popular'  => 'Most Popular',
-                        'trending' => 'Trending'
-                    ] as $sortKey => $label)
-
-                        <button
-                            onclick="applyFilters({ sort: '{{ $sortKey }}' })"
-                            class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border
-                            {{ $currentSort === $sortKey
-                                ? 'border-purple-500/50 bg-purple-600/20 text-white'
-                                : 'border-white/10 bg-white/5 text-white/85 hover:bg-white/10 hover:border-white/20'
-                            }}
-                            text-sm font-semibold text-left cursor-pointer transition-all duration-200">
-
-                            @if($sortKey === 'newest')
-                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="9"></circle>
-                                    <path d="M12 7v6l4 2"></path>
-                                </svg>
-                            @elseif($sortKey === 'popular')
-                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M3 17l6-6 4 4 7-7"></path>
-                                    <path d="M14 8h6v6"></path>
-                                </svg>
-                            @else
-                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M12 22c4 0 7-3 7-7 0-3-2-5-3-7-1 2-2 3-4 4 0-3-2-5-4-7 0 3-3 5-3 10 0 4 3 7 7 7Z"></path>
-                                </svg>
-                            @endif
-
-                            <span>{{ $label }}</span>
-                        </button>
-                    @endforeach
-                </div>
+              <p class="text-xs font-semibold uppercase text-slate-600 mb-3">Sort By</p>
+              <div class="space-y-2">
+                @foreach(['newest' => 'Newest First', 'popular' => 'Most Popular', 'trending' => 'Trending'] as $sortKey => $label)
+                <button onclick="applyFilters({ sort: '{{ $sortKey }}' }}"
+                  class="w-full px-3 py-2 rounded-lg border text-sm font-medium text-left transition-all
+                  {{ $currentSort === $sortKey ? 'gradient-primary text-white border-primary' : 'border-slate-200 text-slate-700 hover:border-slate-300' }}">
+                  {{ $label }}
+                </button>
+                @endforeach
+              </div>
             </div>
 
             <!-- Topics -->
             <div>
-                <p class="text-xs font-semibold mb-2 text-white/80">Topics</p>
+              <p class="text-xs font-semibold uppercase text-slate-600 mb-3">Topics</p>
+              <div class="space-y-2">
+                @foreach(['Vedic Astrology', 'Horoscopes', 'Numerology', 'Tarot'] as $topic)
+                <button onclick="applyFilters({ topic: '{{ $topic }}' }}"
+                  class="w-full px-3 py-2 rounded-lg border text-sm font-medium text-left transition-all
+                  {{ $currentTopic === $topic ? 'gradient-primary text-white border-primary' : 'border-slate-200 text-slate-700 hover:border-slate-300' }}">
+                  {{ $topic }}
+                </button>
+                @endforeach
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
 
-                <div class="space-y-2">
-                    @foreach(['Vedic Astrology','Horoscopes','Zodiac Signs','Planetary Transit','Numerology','Tarot'] as $topic)
-                        <button
-                            onclick="applyFilters({ topic: '{{ $topic }}' })"
-                            class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border
-                            {{ $currentTopic === $topic
-                                ? 'border-purple-500/50 bg-purple-600/20 text-white'
-                                : 'border-white/10 bg-white/5 text-white/85 hover:bg-white/10 hover:border-white/20'
-                            }}
-                            text-sm font-semibold text-left cursor-pointer transition-all duration-200">
-
-                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M4 19a2 2 0 0 0 2 2h14"></path>
-                                <path d="M6 2h14v20H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z"></path>
-                            </svg>
-
-                            <span>{{ $topic }}</span>
-                        </button>
-                    @endforeach
+      <!-- Center Section - Posts Feed -->
+      <div class="lg:col-span-2">
+        <div class="space-y-6">
+          @forelse ($posts as $post)
+          <article class="post-card p-6 md:p-8 card-hover">
+            <!-- Post Header -->
+            <div class="flex items-start justify-between mb-4">
+              <div class="flex items-center gap-3 flex-1">
+                <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200" alt="Author" class="avatar-circle" />
+                <div>
+                  <p class="font-semibold text-slate-900">{{ $post->user->name ?? session('user_name', 'Astrologer') }}</p>
+                  <p class="text-xs text-slate-500">{{ $post->created_at->diffForHumans() }}</p>
                 </div>
+              </div>
+              <span class="badge badge-primary">Astrologer</span>
             </div>
 
-        </div>
-    </div>
-</aside>
-<script>
-let filters = {
-    sort: "{{ request('sort', 'newest') }}",
-    topic: "{{ request('topic') }}"
-};
+            <!-- Post Content -->
+            <a href="{{ route('posts.show', $post->id) }}">
+              <h3 class="text-xl font-bold text-slate-900 mb-2 hover:text-primary transition">{{ $post->title }}</h3>
+            </a>
+            <p class="text-slate-600 mb-4">{{ Str::limit(strip_tags($post->content), 160) }}</p>
 
-function applyFilters(newFilters = {}) {
-
-    Object.keys(newFilters).forEach(key => {
-
-        // Toggle: if same value clicked → remove filter
-        if (filters[key] === newFilters[key]) {
-            delete filters[key];
-        } else {
-            filters[key] = newFilters[key];
-        }
-
-    });
-
-    // Default sort fallback
-    if (!filters.sort) {
-        filters.sort = 'newest';
-    }
-
-    const query = new URLSearchParams(filters).toString();
-
-    fetch(`{{ route('dashboard') }}?${query}`, {
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    })
-    .then(res => res.text())
-    .then(html => {
-        document.getElementById('postsContainer').innerHTML = html;
-
-        // Update URL without reload
-        window.history.pushState({}, '', `?${query}`);
-    })
-    .catch(err => console.error(err));
-}
-</script>
-
-
-      <!-- POSTS FEED -->
-      <div class="flex-1 space-y-6" >
-        <!-- Post Card 1 -->
-     @foreach ($posts as $post)
-<article class="rounded-3xl border border-white/10 bg-gradient-to-b cursor-pointer from-[#1B1E47] to-[#121538] p-6 md:p-8 shadow-[0_30px_80px_rgba(0,0,0,0.55)]">
-
-    {{-- Header --}}
-    <div class="flex items-center gap-3 min-w-0">
-        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden shrink-0 cursor-pointer border-2 border-white/10">
-            <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200" alt="Author" class="w-full h-full object-cover" />
-        </div>
-        <div class="min-w-0">
-            <div class="flex flex-wrap items-center gap-2">
-                <p class="text-sm sm:text-base font-semibold truncate cursor-pointer hover:underline text-white/90">
-                    {{ $post->user->name ?? session('user_name') }}
-                </p>
-                <span class="px-2.5 py-0.5 rounded-full text-xs font-medium cursor-pointer bg-white/5 text-white/70 border border-white/10">
-                    Vedic Astrologer
-                </span>
+            <!-- Post Image -->
+            @if(!empty($post->media))
+            <div class="rounded-lg overflow-hidden mb-5 border border-slate-200">
+              <img src="{{ url('public/' . $post->media[0]) }}" alt="{{ $post->media_alt }}" class="w-full h-80 object-cover" />
             </div>
-            <p class="text-xs sm:text-sm mt-1 text-white/55">{{ $post->created_at->diffForHumans() }}</p>
+            @endif
+
+            <!-- Tags -->
+            @if($post->tags)
+            <div class="flex flex-wrap gap-2 mb-4">
+              @foreach ($post->tags as $tag)
+              <span class="badge badge-success">#{{ $tag }}</span>
+              @endforeach
+            </div>
+            @endif
+
+            <!-- Post Footer - Interactions -->
+            <div class="flex items-center gap-6 text-slate-600 border-t border-slate-200 pt-4">
+              @php
+                $userLiked = $post->likes->contains('user_id', session('user_id'));
+              @endphp
+
+              <!-- Like -->
+              <button onclick="toggleLike({{ $post->id }})" class="like-button flex items-center gap-2 hover:text-primary transition {{ $userLiked ? 'liked' : '' }}">
+                <svg id="like-icon-{{ $post->id }}" class="w-5 h-5" viewBox="0 0 24 24" fill="{{ $userLiked ? '#ef4444' : 'none' }}" stroke="{{ $userLiked ? '#ef4444' : 'currentColor' }}" stroke-width="2">
+                  <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/>
+                </svg>
+                <span id="like-count-{{ $post->id }}" class="text-sm font-medium">{{ $post->likes->count() }}</span>
+              </button>
+
+              <!-- Comments -->
+              <a href="{{ route('posts.show', $post->id) }}" class="flex items-center gap-2 hover:text-primary transition">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"></path>
+                </svg>
+                <span class="text-sm font-medium">{{ $post->comments_count ?? $post->comments->count() }}</span>
+              </a>
+
+              <!-- Share -->
+              <button class="flex items-center gap-2 hover:text-primary transition">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 2L11 13M22 2l-7 20-5-9-9-5 20-7z"></path>
+                </svg>
+                <span class="text-sm font-medium">Share</span>
+              </button>
+            </div>
+          </article>
+          @empty
+          <div class="post-card p-12 text-center">
+            <p class="text-slate-500">No posts yet. Be the first to share!</p>
+          </div>
+          @endforelse
         </div>
-    </div>
-
-    {{-- Tags --}}
-    <div class="flex flex-wrap gap-3 text-xs mb-4 text-amber-300">
-        @foreach ($post->tags ?? [] as $tag)
-            <span>#{{ $tag }}</span>
-        @endforeach
-    </div>
-<a href="{{ route('posts.show', $post->id) }}">
-    {{-- Title --}}
-    <h3 class="text-xl font-semibold mb-3 text-white/90 hover:underline">
-        {{ $post->title }}
-    </h3>
-</a>
-
-    {{-- Content --}}
-    <p class="text-sm text-white/70 mb-4">{{ Str::limit(strip_tags($post->content), 160) }}</p>
-
-    {{-- Media --}}
-    @if(!empty($post->media))
-        <div class="rounded-2xl overflow-hidden mb-5 border border-white/10">
-            <img src="{{ url('public/' . $post->media[0]) }}" alt="{{ $post->media_alt }}" class="w-full h-[300px] object-cover">
-        </div>
-    @endif
-
-    {{-- Footer --}}
-    <div class="flex flex-wrap items-center justify-between gap-4">
-        <div class="flex items-center gap-6 text-white/65">
-
-            {{-- Like Button --}}
-          @php
-    $userLiked = $post->likes->contains('user_id', session('user_id'));
-@endphp
-
-<button 
-    onclick="toggleLike({{ $post->id }})"
-    class="flex items-center gap-2 hover:text-white transition-colors"
->
-    <svg id="like-icon-{{ $post->id }}"
-        class="w-5 h-5"
-        viewBox="0 0 24 24"
-        fill="{{ $userLiked ? 'red' : 'none' }}"
-        stroke="{{ $userLiked ? 'red' : 'currentColor' }}"
-        stroke-width="2">
-        <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/>
-    </svg>
-
-    <span id="like-count-{{ $post->id }}">
-        {{ $post->likes->count() }}
-    </span>
-</button>
-<script>
-function toggleLike(postId) {
-
-    // Laravel route with placeholder
-    let url = "{{ route('posts.like', ':id') }}";
-    url = url.replace(':id', postId);
-
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Accept': 'application/json',
-        },
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Not logged in');
-        }
-        return response.json();
-    })
-    .then(data => {
-        const icon  = document.getElementById(`like-icon-${postId}`);
-        const count = document.getElementById(`like-count-${postId}`);
-
-        if (data.liked) {
-            icon.setAttribute('fill', 'red');
-            icon.setAttribute('stroke', 'red');
-        } else {
-            icon.setAttribute('fill', 'none');
-            icon.setAttribute('stroke', 'currentColor');
-        }
-
-        count.innerText = data.likes_count;
-    })
-    .catch(err => {
-        alert('Please login to like this post');
-        console.error(err);
-    });
-}
-</script>
-
-
-
-            {{-- Comment Count --}}
-            <div class="flex items-center gap-2">
-    <a href="{{ route('posts.show', $post->id) }}"
-       class="flex items-center gap-1.5 text-white/80 hover:text-white transition">
-
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
-        </svg>
-
-        <span class="text-sm font-medium">
-            {{ $post->comments_count ?? $post->comments->count() }}
-        </span>
-    </a>
-</div>
-
-
-        </div>
-    </div>
-
-   
-
-
-</article>
-@endforeach
-
-
-      
       </div>
+
+      <!-- Right Section - Trending & Recommendations (YouTube Style) -->
+      <aside class="hidden lg:block">
+        <div class="bg-white rounded-lg border border-slate-200 p-5 sticky top-24">
+          <h3 class="text-lg font-bold text-slate-900 mb-4">Trending Now</h3>
+          <div class="space-y-4">
+            @php
+              $trendingTopics = [
+                ['title' => 'Mercury Retrograde Effects', 'views' => '12.5K', 'icon' => '📅'],
+                ['title' => 'Aries Season Predictions', 'views' => '8.3K', 'icon' => '♈'],
+                ['title' => 'Full Moon Rituals', 'views' => '6.7K', 'icon' => '🌕'],
+                ['title' => 'Career Numerology Guide', 'views' => '5.2K', 'icon' => '✨'],
+              ];
+            @endphp
+
+            @foreach($trendingTopics as $trend)
+            <div class="p-3 rounded-lg hover:bg-slate-50 cursor-pointer transition">
+              <div class="flex items-start gap-3">
+                <span class="text-2xl">{{ $trend['icon'] }}</span>
+                <div class="flex-1">
+                  <p class="font-semibold text-slate-900 text-sm">{{ $trend['title'] }}</p>
+                  <p class="text-xs text-slate-500 mt-1">{{ $trend['views'] }} views</p>
+                </div>
+              </div>
+            </div>
+            @endforeach
+          </div>
+        </div>
+
+        <!-- Popular Communities -->
+        <div class="bg-white rounded-lg border border-slate-200 p-5 mt-6 sticky top-80">
+          <h3 class="text-lg font-bold text-slate-900 mb-4">Popular Astrologers</h3>
+          <div class="space-y-3">
+            @php
+              $astrologers = [
+                ['name' => 'Sarah Celestial', 'specialty' => 'Vedic Astrology', 'avatar' => 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200'],
+                ['name' => 'Marcus Starseeker', 'specialty' => 'Tarot Reader', 'avatar' => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200'],
+                ['name' => 'Luna Numerologist', 'specialty' => 'Numerology Expert', 'avatar' => 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200'],
+              ];
+            @endphp
+
+            @foreach($astrologers as $astrologer)
+            <div class="flex items-center justify-between p-3 hover:bg-slate-50 rounded-lg transition cursor-pointer">
+              <div class="flex items-center gap-3 flex-1">
+                <img src="{{ $astrologer['avatar'] }}" alt="{{ $astrologer['name'] }}" class="w-10 h-10 rounded-full object-cover" />
+                <div>
+                  <p class="font-semibold text-slate-900 text-sm">{{ $astrologer['name'] }}</p>
+                  <p class="text-xs text-slate-500">{{ $astrologer['specialty'] }}</p>
+                </div>
+              </div>
+              <button class="text-primary font-semibold text-xs hover:bg-primary/10 px-2 py-1 rounded transition">Follow</button>
+            </div>
+            @endforeach
+          </div>
+        </div>
+      </aside>
     </div>
   </main>
 
-  <!-- FLOATING FILTER BUTTON (Mobile Only) -->
-  <button aria-label="Filter Posts" id="floatingFilterBtn"
-    class="lg:hidden fixed bottom-20 right-4 z-40 w-14 h-14 rounded-full bg-gradient-to-r from-purple-600 to-purple-800 text-white flex items-center justify-center fab-button">
-    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M3 6h18M7 12h10M10 18h4" />
-    </svg>
-  </button>
-
-  <!-- MOBILE BOTTOM NAV -->
-  <nav
-    class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[rgba(11,16,35,0.95)] backdrop-blur-xl border-t border-white/10">
+  <!-- Mobile Navigation -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40">
     <div class="flex items-center justify-around h-16">
-      <a href="./index.html"
-        class="flex flex-col items-center gap-1 px-3 py-2 text-white bg-transparent border-none cursor-pointer transition-colors">
+      <a href="#" class="flex flex-col items-center gap-1 px-4 py-2 text-primary">
         <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
-          <path
-            d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
         </svg>
         <span class="text-xs font-medium">Feed</span>
       </a>
-
-      <a href="{{ route('posts.create') }}"
-        class="flex flex-col items-center gap-1 px-3 py-2 text-white/60 bg-transparent border-none cursor-pointer transition-colors">
+      <a href="{{ route('posts.create') }}" class="flex flex-col items-center gap-1 px-4 py-2 text-slate-600 hover:text-primary">
         <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-          <path
-            d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z" />
+          <path d="M12 5v14M5 12h14"></path>
         </svg>
         <span class="text-xs font-medium">Create</span>
       </a>
+      <button onclick="openMobileFilters()" class="flex flex-col items-center gap-1 px-4 py-2 text-slate-600 hover:text-primary">
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 6h18M7 12h10M10 18h4"></path>
+        </svg>
+        <span class="text-xs font-medium">Filter</span>
+      </button>
     </div>
   </nav>
 
-  <!-- MOBILE FILTERS DRAWER -->
-  <div class="lg:hidden">
-    <div id="filtersBackdrop"
-      class="fixed inset-0 z-40 bg-black/60 opacity-0 pointer-events-none transition-opacity duration-300"></div>
-    <aside id="filtersDrawer"
-      class="fixed bottom-0 left-0 right-0 z-50 max-h-[85vh] bg-[rgba(11,16,35,0.95)] backdrop-blur-xl border-t border-white/10 rounded-t-3xl transform translate-y-full transition-transform duration-300 ease-out">
-      <div class="flex items-center justify-between p-4 border-b border-white/10">
-        <h3 class="text-lg font-semibold text-white">Filters</h3>
-        <button aria-label="Close Filters" id="closeFiltersBtn"
-          class="p-2 rounded-lg cursor-pointer hover:bg-white/5 transition-colors text-white/70">
-          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M18 6 6 18M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-      <div class="filters-content max-h-[calc(85vh-4rem)] overflow-y-auto p-5">
-        <div class="space-y-5">
-          <!-- Sort By -->
-          <div>
-            <p class="text-xs font-semibold mb-2 text-white/80">Sort By</p>
-            <div class="space-y-2">
-              <button aria-label="Newest First" type="button"
-                class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border border-purple-500/30 bg-[linear-gradient(to_right,_rgba(58,29,255,0.55),_rgba(35,22,74,0.55))] text-white text-sm font-semibold text-left cursor-pointer shadow-[0_10px_30px_rgba(58,29,255,0.25)] hover:shadow-[0_12px_35px_rgba(58,29,255,0.35)] transition-all duration-200">
-                <svg class="w-4 h-4 text-white/90" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                  stroke-width="2">
-                  <circle cx="12" cy="12" r="9"></circle>
-                  <path d="M12 7v6l4 2"></path>
-                </svg>
-                <span>Newest First</span>
-              </button>
-              <button aria-label="Most Popular" type="button"
-                class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-white/85 text-sm font-semibold text-left cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all duration-200">
-                <svg class="w-4 h-4 text-white/75" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                  stroke-width="2">
-                  <path d="M3 17l6-6 4 4 7-7"></path>
-                  <path d="M14 8h6v6"></path>
-                </svg>
-                <span>Most Popular</span>
-              </button>
-              <button aria-label="Trending" type="button"
-                class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-white/85 text-sm font-semibold text-left cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all duration-200">
-                <svg class="w-4 h-4 text-white/75" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                  stroke-width="2">
-                  <path d="M12 22c4 0 7-3 7-7 0-3-2-5-3-7-1 2-2 3-4 4 0-3-2-5-4-7 0 3-3 5-3 10 0 4 3 7 7 7Z"></path>
-                </svg>
-                <span>Trending</span>
-              </button>
-            </div>
-          </div>
+  <!-- Like Toggle Script -->
+  <script>
+    let filters = {
+      sort: "{{ request('sort', 'newest') }}",
+      topic: "{{ request('topic') }}"
+    };
 
-          <!-- Topics -->
-          <div>
-            <p class="text-xs font-semibold mb-2 text-white/80">Topics</p>
-            <div class="space-y-2">
-              <button aria-label="Vedic Astrology" type="button"
-                class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-white/85 text-sm font-semibold text-left cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all duration-200">
-                <svg class="w-4 h-4 text-white/75" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                  stroke-width="2">
-                  <path d="M4 19a2 2 0 0 0 2 2h14"></path>
-                  <path d="M6 2h14v20H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z"></path>
-                </svg>
-                <span>Vedic Astrology</span>
-              </button>
-              <button aria-label="Horoscope" type="button"
-                class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-white/85 text-sm font-semibold text-left cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all duration-200">
-                <svg class="w-4 h-4 text-white/75" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                  stroke-width="2">
-                  <path d="M12 2l3.1 6.3 7 1-5 4.9 1.2 7-6.3-3.3-6.3 3.3 1.2-7-5-4.9 7-1L12 2Z"></path>
-                </svg>
-                <span>Horoscopes</span>
-              </button>
-              <button aria-label="Zodiac Signs" type="button"
-                class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-white/85 text-sm font-semibold text-left cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all duration-200">
-                <svg class="w-4 h-4 text-white/75" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                  stroke-width="2">
-                  <path d="M12 2l1.4 4.3L18 8l-4.6 1.7L12 14l-1.4-4.3L6 8l4.6-1.7L12 2Z"></path>
-                  <path d="M19 13l.9 2.7L23 17l-3.1 1.3L19 21l-.9-2.7L15 17l3.1-1.3L19 13Z"></path>
-                </svg>
-                <span>Zodiac Signs</span>
-              </button>
-              <button aria-label="Planetary Transit" type="button"
-                class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-white/85 text-sm font-semibold text-left cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all duration-200">
-                <svg class="w-4 h-4 text-white/75" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                  stroke-width="2">
-                  <circle cx="12" cy="12" r="9"></circle>
-                  <path d="M3 12h18"></path>
-                  <path d="M12 3a14 14 0 0 1 0 18"></path>
-                  <path d="M12 3a14 14 0 0 0 0 18"></path>
-                </svg>
-                <span>Planetary Transit</span>
-              </button>
-              <button aria-label="Numerology" type="button"
-                class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-white/85 text-sm font-semibold text-left cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all duration-200">
-                <svg class="w-4 h-4 text-white/75" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                  stroke-width="2">
-                  <path d="M4 9h16"></path>
-                  <path d="M4 15h16"></path>
-                  <path d="M10 3L8 21"></path>
-                  <path d="M16 3l-2 18"></path>
-                </svg>
-                <span>Numerology</span>
-              </button>
-              <button aria-label="Tarot" type="button"
-                class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-white/85 text-sm font-semibold text-left cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all duration-200">
-                <svg class="w-4 h-4 text-white/75" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                  stroke-width="2">
-                  <path d="M22 10L12 5 2 10l10 5 10-5Z"></path>
-                  <path d="M6 12v6c4 2 8 2 12 0v-6"></path>
-                </svg>
-                <span>Tarot</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </aside>
-  </div>
+    function applyFilters(newFilters = {}) {
+      Object.keys(newFilters).forEach(key => {
+        if (filters[key] === newFilters[key]) {
+          delete filters[key];
+        } else {
+          filters[key] = newFilters[key];
+        }
+      });
 
-  <!-- FOOTER -->
-  <footer class="mt-16 border-t border-white/10 bg-[#0B0E1F]/50">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-        <p class="text-sm text-white/50">© 2025 Mayatara. All rights reserved.</p>
-        <div class="flex items-center gap-6 text-sm text-white/50">
-          <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
-          <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
-          <a href="#" class="hover:text-white transition-colors">Contact</a>
-        </div>
-      </div>
-    </div>
-  </footer>
+      if (!filters.sort) {
+        filters.sort = 'newest';
+      }
 
+      const query = new URLSearchParams(filters).toString();
+      fetch(`{{ route('dashboard') }}?${query}`, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      })
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById('postsContainer').innerHTML = html;
+        window.history.pushState({}, '', `?${query}`);
+      })
+      .catch(err => console.error(err));
+    }
 
-  <script src="./assets/js/main.js">
+    function toggleLike(postId) {
+      let url = "{{ route('posts.like', ':id') }}";
+      url = url.replace(':id', postId);
 
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': '{{ csrf_token() }}',
+          'Accept': 'application/json',
+        },
+      })
+      .then(response => {
+        if (!response.ok) throw new Error('Not logged in');
+        return response.json();
+      })
+      .then(data => {
+        const icon = document.getElementById(`like-icon-${postId}`);
+        const count = document.getElementById(`like-count-${postId}`);
+        const button = icon.closest('.like-button');
+
+        if (data.liked) {
+          icon.setAttribute('fill', '#ef4444');
+          icon.setAttribute('stroke', '#ef4444');
+          button.classList.add('liked');
+        } else {
+          icon.setAttribute('fill', 'none');
+          icon.setAttribute('stroke', 'currentColor');
+          button.classList.remove('liked');
+        }
+
+        count.innerText = data.likes_count;
+      })
+      .catch(err => {
+        alert('Please login to like this post');
+        console.error(err);
+      });
+    }
+
+    function openMobileFilters() {
+      alert('Filter functionality for mobile');
+    }
+
+    function confirmLogout() {
+      return confirm('Are you sure you want to logout?');
+    }
   </script>
 </body>
 
