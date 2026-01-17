@@ -23,34 +23,30 @@ class PostController extends Controller
         'category' => 'required|string',
         'visibility' => 'required|string',
         'slug' => 'nullable|string|max:255|unique:posts,slug',
-
         'content' => 'required',
         'media.*' => 'nullable|file|mimes:jpg,jpeg,png,webp,mp4,webm|max:20480',
         'media_alt' => 'nullable|string|max:255',
         'tags' => 'nullable|string',
         'allow_comments' => 'nullable',
+        'community_id' => 'nullable|exists:communities,id', // <-- added
     ]);
 
     $slug = $request->slug ?: Str::slug($request->title);
 
-  $mediaFiles = [];
+    $mediaFiles = [];
 
-if ($request->hasFile('media')) {
-    foreach ($request->file('media') as $file) {
-
-        $filename = time() . '_' . $file->getClientOriginalName();
-
-        $file->move(public_path('posts'), $filename);
-
-        $mediaFiles[] = 'posts/' . $filename;
+    if ($request->hasFile('media')) {
+        foreach ($request->file('media') as $file) {
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('posts'), $filename);
+            $mediaFiles[] = 'posts/' . $filename;
+        }
     }
-}
-
 
     $tags = $request->tags ? array_map('trim', explode(',', $request->tags)) : [];
 
     Post::create([
-  'user_id' => session('user_id'),
+        'user_id' => session('user_id'),
         'title' => $request->title,
         'slug' => $slug,
         'category' => $request->category,
@@ -61,10 +57,12 @@ if ($request->hasFile('media')) {
         'tags' => $tags,
         'allow_comments' => $request->has('allow_comments'),
         'status' => 'published',
+        'community_id' => $request->community_id ?? null, // <-- save community if provided
     ]);
 
     return redirect()->back()->with('success', 'Post published successfully!');
 }
+
 public function like($id)
 {
     $post = Post::findOrFail($id);

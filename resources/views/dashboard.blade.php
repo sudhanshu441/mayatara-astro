@@ -167,12 +167,19 @@
         <!-- Right Section -->
         <div class="flex items-center gap-4">
           <!-- Profile -->
-          <div class="flex items-center gap-3 cursor-pointer">
-            <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-slate-200 flex-shrink-0">
-              <img class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200" alt="Profile" />
-            </div>
-            <p class="hidden sm:block text-sm font-semibold text-slate-900">{{ session('user_name', 'User') }}</p>
-          </div>
+         <a href="{{ route('profile.show') }}">
+  <div class="flex items-center gap-3 cursor-pointer">
+    <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-slate-200 flex-shrink-0">
+      <img class="w-full h-full object-cover"
+           src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200"
+           alt="Profile" />
+    </div>
+    <p class="hidden sm:block text-sm font-semibold text-slate-900">
+      {{ session('user_name', 'User') }}
+    </p>
+  </div>
+</a>
+
 
           <!-- Logout -->
           <form method="POST" action="{{ route('logout') }}" onsubmit="return confirmLogout();" class="hidden sm:block">
@@ -195,42 +202,188 @@
           <h2 class="text-3xl md:text-3xl font-bold text-slate-900 mb-2">Discover insights from astrologers around the world</h2>
           <!-- <p class="text-lg text-slate-600">Discover insights from astrologers around the world</p> -->
         </div>
-        <a href="{{ route('posts.create') }}" class="inline-flex items-center gap-2 px-6 py-3 gradient-primary text-white rounded-lg font-semibold hover:shadow-lg transition-all">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      @php
+    $currentRoute = Route::currentRouteName();
+    $communityId = $currentRoute === 'community.posts' ? request()->route('communityId') : null;
+@endphp
+
+<a href="{{ $communityId ? route('posts.create', ['community_id' => $communityId]) : route('posts.create') }}" 
+   class="inline-flex items-center gap-2 px-6 py-3 gradient-primary text-white rounded-lg font-semibold hover:shadow-lg transition-all">
+    
+    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 5v14M5 12h14"></path>
+    </svg>
+    Create Post
+</a>
+
+        @php
+    // Get current route name
+    $currentRoute = Route::currentRouteName();
+@endphp
+
+@if($currentRoute !== 'community.posts')
+    <button
+        onclick="openCommunityModal()"
+        class="inline-flex items-center gap-2 px-6 py-3 gradient-primary text-white rounded-lg font-semibold hover:shadow-lg transition-all">
+        
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M12 5v14M5 12h14"></path>
-          </svg>
-          Create Post
-        </a>
-      </div>
+        </svg>
+        Community
+    </button>
+@endif
 
-      <!-- Communities Section (YouTube Style) -->
-      <div class="mb-10">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-2xl font-bold text-slate-900">Trending Communities</h2>
-          <a href="#" class="text-primary font-semibold text-sm hover:underline">View all →</a>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-          @php
-            $communities = [
-              ['name' => 'Vedic Astrology', 'emoji' => '🌟', 'color' => 'from-blue-100 to-blue-50'],
-              ['name' => 'Horoscopes', 'emoji' => '♈', 'color' => 'from-purple-100 to-purple-50'],
-              ['name' => 'Numerology', 'emoji' => '🔢', 'color' => 'from-pink-100 to-pink-50'],
-              ['name' => 'Tarot', 'emoji' => '🃏', 'color' => 'from-orange-100 to-orange-50'],
-              ['name' => 'Planetary Transit', 'emoji' => '🪐', 'color' => 'from-green-100 to-green-50'],
-              ['name' => 'Zodiac Signs', 'emoji' => '♋', 'color' => 'from-red-100 to-red-50'],
-            ];
-          @endphp
+<!-- Community Modal -->
+<div id="communityModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
+    <div class="w-full max-w-md rounded-xl p-6 bg-white text-gray-900 border border-gray-300">
+        
+        <h2 class="text-xl font-semibold mb-4">
+            Community
+        </h2>
 
-          @foreach($communities as $community)
-          <div class="community-card gradient-light border border-slate-200 p-4 text-center hover:shadow-md">
-            <div class="text-3xl mb-2">{{ $community['emoji'] }}</div>
-            <h3 class="font-semibold text-slate-900 text-sm">{{ $community['name'] }}</h3>
-            <p class="text-xs text-slate-500 mt-1">Join now</p>
-          </div>
-          @endforeach
-        </div>
-      </div>
+        <form action="{{ route('communities.store') }}" method="POST">
+            @csrf
+
+            <!-- Community Name -->
+            <div class="mb-4">
+                <label class="block text-sm text-gray-700 mb-1">Community Name</label>
+                <input type="text" name="name" required
+                       class="w-full px-4 py-2 rounded-lg bg-white border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+
+            <!-- Community Icon Dropdown -->
+            <div class="mb-4">
+                <label class="block text-sm text-gray-700 mb-1">Community Icon</label>
+                <select name="icon" required
+                        class="w-full px-4 py-2 rounded-lg bg-white border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <option value="">Select an icon</option>
+                    <option value="users">👥 Users</option>
+                    <option value="chat">💬 Chat</option>
+                    <option value="heart">❤️ Heart</option>
+                    <option value="star">⭐ Star</option>
+                    <option value="fire">🔥 Fire</option>
+                    <option value="globe">🌍 Globe</option>
+                </select>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex justify-end gap-3">
+                <button type="button" onclick="closeCommunityModal()"
+                        class="px-4 py-2 text-gray-500 hover:text-gray-900">
+                    Cancel
+                </button>
+                <button type="submit"
+                        class="px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                    Create
+                </button>
+            </div>
+        </form>
+
     </div>
+</div>
+
+<script>
+    function openCommunityModal() {
+        document.getElementById('communityModal').classList.remove('hidden');
+        document.getElementById('communityModal').classList.add('flex');
+    }
+
+    function closeCommunityModal() {
+        document.getElementById('communityModal').classList.add('hidden');
+        document.getElementById('communityModal').classList.remove('flex');
+    }
+</script>
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+      </div>
+@php
+use App\Models\Community;
+
+$communities = Community::latest()
+    ->take(12)
+    ->get();
+@endphp
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+
+<!-- Communities Section (YouTube Style) -->
+ @if($currentRoute !== 'community.posts')
+
+<div class="mb-10">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl font-bold text-slate-900">Trending Communities</h2>
+        <a href="#" class="text-primary font-semibold text-sm hover:underline">
+            View all →
+        </a>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+        @forelse($communities as $community)
+            <div class="community-card gradient-light border border-slate-200 p-4 text-center hover:shadow-md transition">
+                
+                <!-- Icon -->
+               <div class="text-3xl mb-2 text-indigo-600 group-hover:text-pink-600 transition">
+    <i class="{{ $community->fa_icon }}"></i>
+</div>
+
+
+                <!-- Name -->
+                <h3 class="font-semibold text-slate-900 text-sm">
+                    {{ $community->name }}
+                </h3>
+
+@php
+$request = \App\Models\CommunityJoinRequest::where('community_id', $community->id)
+    ->where('user_id', session('user_id'))
+    ->first();
+
+$isMember = \App\Models\CommunityMember::where('community_id', $community->id)
+    ->where('user_id', session('user_id'))
+    ->exists();
+@endphp
+
+@if($isMember)
+    <!-- Make it clickable to open the community page -->
+    <!-- Clicking "Following" opens the community posts page -->
+    <a href="{{ route('community.posts', $community->id) }}" 
+       class="text-green-600 text-sm font-semibold cursor-pointer hover:underline">
+        Following
+    </a>
+@elseif($request && $request->status === 'pending')
+    <span class="text-yellow-600 text-sm">Request Sent</span>
+
+@elseif($request && $request->status === 'rejected')
+    <form method="POST" action="{{ route('community.join', $community->id) }}">
+        @csrf
+        <button type="submit" class="text-indigo-600 text-sm font-semibold">
+            Join Now
+        </button>
+    </form>
+
+@else
+    <form method="POST" action="{{ route('community.join', $community->id) }}">
+        @csrf
+        <button type="submit" class="text-indigo-600 text-sm font-semibold">
+            Join Now
+        </button>
+    </form>
+@endif
+
+            </div>
+        @empty
+            <p class="text-sm text-slate-500 col-span-full">
+                No communities found.
+            </p>
+        @endforelse
+    </div>
+</div>
+
+    </div>
+@endif
 
     <!-- Main Feed Layout -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">

@@ -18,6 +18,7 @@ class Post extends Model
         'media',
         'media_alt',
         'tags',
+        'community_id',
         'allow_comments',
         'status'
     ];

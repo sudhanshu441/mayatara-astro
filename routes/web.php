@@ -52,4 +52,28 @@ Route::post('/posts/{post}/comment', [PostController::class, 'storecomments'])
 Route::post('/comments/{comment}/like', [PostController::class,'likecomment'])
     ->name('comments.like');
 
+use App\Http\Controllers\CommunityController;
 
+Route::post('/communities/store', [CommunityController::class, 'store'])
+    ->name('communities.store');
+use App\Http\Controllers\ProfileController;
+
+Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+
+Route::delete('/community/{id}', [ProfileController::class, 'deleteCommunity'])
+    ->name('community.delete');
+
+
+    use App\Http\Controllers\CommunityJoinController;
+
+Route::post('/community/{id}/join', [CommunityJoinController::class, 'sendRequest'])
+    ->name('community.join');
+
+Route::post('/community-request/{id}/approve', [CommunityJoinController::class, 'approve'])
+    ->name('community.request.approve');
+
+Route::post('/community-request/{id}/reject', [CommunityJoinController::class, 'reject'])
+    ->name('community.request.reject');
+    
+Route::get('/community/{communityId}/posts', [CommunityController::class, 'show'])->name('community.posts');

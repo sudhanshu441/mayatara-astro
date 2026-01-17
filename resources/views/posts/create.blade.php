@@ -19,151 +19,164 @@
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 
     {{-- Page Styles --}}
-    <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: radial-gradient(circle at top right, #1e1345, #0f0a1e 40%);
-            background-attachment: fixed;
-        }
+   <style>
+    body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background: radial-gradient(circle at top right, #efe5e5ff, #e0e0e0 40%);
+        background-attachment: fixed;
+        color: #111827;
+    }
 
-        .glass {
-            background: rgba(26, 20, 46, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
+    .glass {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+    }
 
-        .ql-toolbar.ql-snow {
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            background: rgba(15, 10, 30, 0.8);
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
-            padding: 12px !important;
-        }
+    .ql-toolbar.ql-snow {
+        border: 1px solid rgba(0, 0, 0, 0.1) !important;
+        background: rgba(255, 255, 255, 0.9);
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        padding: 12px !important;
+        color: #111827;
+    }
 
-        .ql-container.ql-snow {
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            height: 300px;
-            color: #e5e7eb;
-            border-bottom-left-radius: 12px;
-            border-bottom-right-radius: 12px;
-            background: rgba(15, 10, 30, 0.4);
-        }
+    .ql-container.ql-snow {
+        border: 1px solid rgba(0, 0, 0, 0.1) !important;
+        height: 300px;
+        color: #111827;
+        border-bottom-left-radius: 12px;
+        border-bottom-right-radius: 12px;
+        background: rgba(255, 255, 255, 0.8);
+    }
 
-        .ql-editor::before {
-            color: #6b7280 !important;
-        }
+    .ql-editor::before {
+        color: #9ca3af !important; /* placeholder color */
+    }
 
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
 
-        ::-webkit-scrollbar-track {
-            background: #0f0a1e;
-        }
+    ::-webkit-scrollbar-track {
+        background: #f3f4f6;
+    }
 
-        ::-webkit-scrollbar-thumb {
-            background: #4b2c91;
-            border-radius: 10px;
-        }
+    ::-webkit-scrollbar-thumb {
+        background: #a855f7; /* keep accent color */
+        border-radius: 10px;
+    }
 
-        .tag-chip {
-            animation: fadeIn 0.2s ease-in;
-        }
+    .tag-chip {
+        animation: fadeIn 0.2s ease-in;
+    }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.8);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .modal-overlay {
-            transition: opacity 0.3s ease-in-out;
-        }
-
-        .modal-content-wrapper {
-            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
-        }
-
-        .modal-overlay.hidden {
+    @keyframes fadeIn {
+        from {
             opacity: 0;
-            pointer-events: none;
+            transform: scale(0.8);
         }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
 
-        .modal-overlay.hidden .modal-content-wrapper {
-            transform: scale(0.95);
+    .modal-overlay {
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    .modal-content-wrapper {
+        transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    }
+
+    .modal-overlay.hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .modal-overlay.hidden .modal-content-wrapper {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+
+    .drag-over {
+        border-color: #a855f7 !important;
+        background: rgba(168, 85, 247, 0.05) !important;
+    }
+
+    .media-preview-item {
+        animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+        from {
             opacity: 0;
+            transform: translateY(10px);
         }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
 
-        .drag-over {
-            border-color: #a855f7 !important;
-            background: rgba(168, 85, 247, 0.05) !important;
-        }
-
-        .media-preview-item {
-            animation: slideIn 0.3s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    </style>
 
 </head>
 <body class="text-gray-100 min-h-screen">
 
   <!-- HEADER -->
-  <header class="sticky top-0 z-50 bg-[rgba(11,16,35,0.4)] backdrop-blur-xl border-b border-white/10">
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-200">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="h-16 flex items-center justify-between">
-        <a href="/" class="flex items-center gap-2 cursor-pointer">
-          <img class="w-8 h-8"  src="{{ url('public\star.png') }}"  alt="Mayatara" />
-          <h1 class="text-lg sm:text-xl font-bold text-white">Mayatara</h1>
+        <a href="/" class="flex items-center gap-3 cursor-pointer">
+          <img src="{{ asset('public/logofiles/png/logo.png') }}"
+     alt="Logo"
+     style="width:80px;">
         </a>
 
         <!-- Desktop Nav -->
-        <nav class="hidden md:flex items-center gap-2">
-          <a href="{{ route('dashboard') }}"
-            class="flex items-center gap-2 px-3 py-2 rounded-md text-white/70 hover:bg-white/5 transition-colors cursor-pointer">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round">
-              <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
-              <path
-                d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+        <nav class="hidden md:flex items-center gap-1">
+          <a href="#" class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
             </svg>
-            <span>Feed</span>
+            <span class="text-sm font-medium">Feed</span>
           </a>
-
-          <a  href="{{ route('posts.create') }}"
-            class="flex items-center gap-2 px-3 py-2 rounded-md text-white/70 hover:bg-white/5 transition-colors cursor-pointer">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-              <path
-                d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z" />
+          <a href="{{ route('posts.create') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 5v14M5 12h14"></path>
             </svg>
-            <span>Create</span>
+            <span class="text-sm font-medium">Create</span>
           </a>
         </nav>
 
-        <!-- Profile -->
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full overflow-hidden cursor-pointer border-2 border-white/10">
-            <img class="w-full h-full object-cover"
-              src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200" alt="Profile" />
-          </div>
-          <p class="hidden sm:block text-base font-semibold text-white">Abhishek Kumar</p>
+        <!-- Right Section -->
+        <div class="flex items-center gap-4">
+          <!-- Profile -->
+         <a href="{{ route('profile.show') }}">
+  <div class="flex items-center gap-3 cursor-pointer">
+    <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-slate-200 flex-shrink-0">
+      <img class="w-full h-full object-cover"
+           src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200"
+           alt="Profile" />
+    </div>
+    <p class="hidden sm:block text-sm font-semibold text-slate-900">
+      {{ session('user_name', 'User') }}
+    </p>
+  </div>
+</a>
+
+
+          <!-- Logout -->
+          <form method="POST" action="{{ route('logout') }}" onsubmit="return confirmLogout();" class="hidden sm:block">
+            @csrf
+            <button type="submit" class="px-4 py-2 rounded-lg text-red-600 hover:bg-red-50 font-medium text-sm transition">
+              Logout
+            </button>
+          </form>
         </div>
       </div>
     </div>
@@ -215,11 +228,36 @@
 
       <div class="flex-1 space-y-8">
         <header>
-          <h1 class="text-3xl font-extrabold text-white mb-2 tracking-tight">Compose Insights</h1>
-          <p class="text-gray-400">What do the stars have in store today?</p>
+          <h1 class="text-3xl font-extrabold text-black mb-2 tracking-tight">Compose Insights</h1>
+          <p class="text-black">What do the stars have in store today?</p>
         </header>
+@php
+    // Check for community ID either from route parameter OR query string
+    $communityId = request()->route('communityId') ?? request()->query('community_id');
+@endphp
 
-       <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
+<form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
+    @csrf
+
+    @if($communityId)
+        <div class="mb-4">
+            <input 
+                   name="community_id" 
+                   type="hidden"
+                   id="community_id" 
+                   value="{{ $communityId }}" 
+                   class="w-full bg-black text-white border border-white/10 rounded-xl px-4 py-2"
+            >
+        </div>
+    @endif
+
+    <!-- rest of your form fields -->
+
+
+    <!-- rest of your form fields -->
+
+
+        <!-- rest of your form fields -->
     @csrf
     <div class="glass rounded-3xl md:p-8 p-4 shadow-2xl">
         <div class="space-y-6">

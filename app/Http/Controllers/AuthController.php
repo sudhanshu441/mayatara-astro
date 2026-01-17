@@ -17,6 +17,7 @@ public function dashboard(Request $request)
 {
     $query = Post::where('status', 'published')
                  ->where('visibility', 'public')
+                 ->whereNull('community_id') // only posts not in any community
                  ->with('user'); // eager load user for category
 
     // ----- SORTING -----
@@ -49,6 +50,7 @@ public function dashboard(Request $request)
 
     return view('dashboard', compact('posts'));
 }
+
 
 
 
